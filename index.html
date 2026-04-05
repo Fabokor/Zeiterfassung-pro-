@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<meta name="theme-color" content="#ffd166">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Zeiterfassung">
+<meta name="application-name" content="Zeiterfassung Pro">
+<meta name="description" content="Arbeitszeiterfassung - Überstunden, Urlaub, Steuer">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<title>Zeiterfassung Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0c10;--sf:#111318;--card:#161a22;--c2:#1d2230;--brd:#252d3d;--b2:#2e3850;--acc:#ffd166;--grn:#06d6a0;--red:#ef476f;--blu:#118ab2;--pur:#9b72cf;--txt:#dde3f0;--mu:#5a6580;--m2:#8090b0;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--txt);font-family:'Outfit',sans-serif;min-height:100vh;padding-bottom:80px;}
+.hdr{background:linear-gradient(180deg,#0e1220,var(--bg));border-bottom:1px solid var(--brd);padding:11px 13px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.hdr h1{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:4px;color:var(--acc);line-height:1;}
+.hdr .sub{font-family:'JetBrains Mono',monospace;font-size:0.5rem;color:var(--mu);letter-spacing:2px;text-transform:uppercase;}
+.hdr-r{text-align:right;}
+.ebadge{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;letter-spacing:2px;color:var(--txt);}
+.einfo{font-family:'JetBrains Mono',monospace;font-size:0.52rem;color:var(--m2);}
+.ebar{background:var(--sf);border-bottom:1px solid var(--brd);padding:6px 10px;display:flex;gap:6px;overflow-x:auto;}
+.ebar::-webkit-scrollbar{display:none;}
+.ec{display:flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--b2);border-radius:18px;padding:4px 9px 4px 4px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.ec.on{border-color:var(--acc);background:rgba(255,209,102,0.1);}
+.ec.on .ecn{color:var(--acc);}
+.eav{width:23px;height:23px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:0.65rem;color:#000;flex-shrink:0;}
+.ecn{font-family:'JetBrains Mono',monospace;font-size:0.62rem;font-weight:700;color:var(--txt);}
+.eadd{background:var(--sf);border:1px dashed var(--b2);border-radius:18px;padding:4px 12px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--mu);white-space:nowrap;flex-shrink:0;}
+.nav{display:flex;background:var(--sf);border-bottom:1px solid var(--brd);overflow-x:auto;}
+.nav::-webkit-scrollbar{display:none;}
+.nt{flex:1;min-width:60px;padding:9px 3px;text-align:center;font-size:0.56rem;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-family:'JetBrains Mono',monospace;}
+.nt.on{color:var(--acc);border-bottom-color:var(--acc);}
+.pg{display:none;padding:11px;max-width:560px;margin:0 auto;}
+.pg.on{display:block;}
+.card{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:13px;margin-bottom:9px;}
+.chd{font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--mu);margin-bottom:9px;display:flex;align-items:center;gap:6px;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--acc);flex-shrink:0;}
+label.lbl{display:block;font-size:0.6rem;color:var(--m2);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-family:'JetBrains Mono',monospace;}
+input,select,textarea{width:100%;background:var(--sf);border:1px solid var(--b2);color:var(--txt);font-family:'JetBrains Mono',monospace;font-size:0.92rem;font-weight:600;padding:8px 10px;border-radius:8px;outline:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--acc);}
+select option{background:var(--card);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:7px;}
+.fld{margin-bottom:7px;}
+.btn{width:100%;border:none;font-family:'Bebas Neue',sans-serif;font-size:0.95rem;letter-spacing:2px;padding:11px;border-radius:9px;cursor:pointer;transition:filter 0.15s,transform 0.1s;}
+.btn:active{transform:scale(0.97);}
+.bp{background:var(--acc);color:#000;}
+.bp:hover{filter:brightness(1.1);}
+.bg{background:var(--sf);border:1px solid var(--b2);color:var(--txt);}
+.bd{background:var(--red);color:#fff;}
+.bsm{width:auto;font-size:0.82rem;padding:6px 11px;border-radius:7px;}
+.rr{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--brd);}
+.rr:last-child{border-bottom:none;}
+.rl{font-size:0.65rem;color:var(--m2);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.5px;}
+.rv{font-family:'JetBrains Mono',monospace;font-size:0.88rem;font-weight:700;color:var(--txt);}
+.rv.big{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;}
+.rv.plus{color:var(--grn);}
+.rv.minus{color:var(--red);}
+.rv.neu{color:var(--m2);}
+.bann{background:var(--c2);border:1px solid var(--brd);border-radius:11px;padding:12px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;}
+.bl{font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--m2);}
+.bv{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:3px;line-height:1;}
+.bv.plus{color:var(--grn);}
+.bv.minus{color:var(--red);}
+.bv.neu{color:var(--m2);}
+.bs{font-family:'JetBrains Mono',monospace;font-size:0.55rem;color:var(--mu);margin-top:2px;}
+.prog{background:var(--sf);border-radius:4px;height:4px;margin:4px 0 2px;overflow:hidden;}
+.prog-b{height:100%;border-radius:4px;transition:width 0.5s;}
+.note{font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--m2);padding:4px 0 6px;}
+.empty{text-align:center;color:var(--mu);font-family:'JetBrains Mono',monospace;font-size:0.7rem;padding:18px 0;}
+.yr-row{display:flex;align-items:center;gap:7px;margin-bottom:9px;}
+.yr-row select{flex:1;}
+.hf{display:flex;gap:6px;}
+.hf input{flex:1;}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px;}
+.sb{background:var(--c2);border:1px solid var(--brd);border-radius:9px;padding:11px;text-align:center;}
+.sbv{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;line-height:1;margin-bottom:2px;}
+.sbk{font-family:'JetBrains Mono',monospace;font-size:0.52rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--m2);}
+.sbv.plus{color:var(--grn);}
+.sbv.minus{color:var(--red);}
+.sbv.vac{color:var(--grn);}
+.sbv.acc{color:var(--acc);}
+table.t{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:0.66rem;}
+table.t th{color:var(--mu);text-align:left;padding:5px 4px;border-bottom:1px solid var(--brd);font-size:0.56rem;letter-spacing:1px;text-transform:uppercase;font-weight:400;white-space:nowrap;}
+table.t td{padding:5px 4px;border-bottom:1px solid var(--brd);white-space:nowrap;}
+table.t tr:last-child td{border-bottom:none;}
+table.t td.plus{color:var(--grn);font-weight:700;}
+table.t td.minus{color:var(--red);font-weight:700;}
+.tag{display:inline-block;padding:2px 5px;border-radius:4px;font-size:0.54rem;font-weight:700;letter-spacing:1px;}
+.tw{background:rgba(255,209,102,0.15);color:var(--acc);}
+.tv{background:rgba(6,214,160,0.15);color:var(--grn);}
+.ts{background:rgba(239,71,111,0.15);color:var(--red);}
+.th{background:rgba(155,114,207,0.15);color:var(--pur);}
+.to{background:rgba(17,138,178,0.15);color:var(--blu);}
+.delbtn{background:none;border:1px solid var(--brd);color:var(--mu);font-size:0.58rem;padding:3px 6px;border-radius:4px;cursor:pointer;font-family:'JetBrains Mono',monospace;}
+.delbtn:hover{border-color:var(--red);color:var(--red);}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--grn);color:#000;font-family:'JetBrains Mono',monospace;font-size:0.72rem;font-weight:700;letter-spacing:1px;padding:8px 18px;border-radius:28px;z-index:9999;transition:transform 0.3s cubic-bezier(.4,0,.2,1);pointer-events:none;}
+#toast.on{transform:translateX(-50%) translateY(0);}
+#toast.err{background:var(--red);color:#fff;}
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:flex-end;justify-content:center;}
+.mo.open{display:flex;}
+.mo-box{background:var(--card);border-radius:18px 18px 0 0;padding:18px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;}
+.mo-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:3px;color:var(--acc);margin-bottom:12px;}
+.swatches{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px;}
+.sw{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;}
+.sw.sel{border-color:#fff;transform:scale(1.15);}
+.eli{display:flex;align-items:center;gap:8px;padding:8px;background:var(--sf);border-radius:8px;margin-bottom:5px;}
+.eli-info{flex:1;}
+.eli-name{font-weight:700;font-size:0.85rem;}
+.eli-sub{font-family:'JetBrains Mono',monospace;font-size:0.56rem;color:var(--m2);}
+.eli-actions{display:flex;gap:4px;}
+.home-greet{background:linear-gradient(135deg,var(--c2),var(--card));border:1px solid var(--brd);border-radius:11px;padding:13px;margin-bottom:9px;display:flex;align-items:center;gap:11px;}
+.hav{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:0.95rem;color:#000;flex-shrink:0;}
+.hname{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;color:var(--txt);}
+.hdate{font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--mu);margin-top:2px;}
+.hgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px;}
+.hbox{background:var(--c2);border:1px solid var(--brd);border-radius:11px;padding:12px;text-align:center;}
+.hbv{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:2px;line-height:1;}
+.hbk{font-family:'JetBrains Mono',monospace;font-size:0.54rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--m2);margin-top:3px;}
+.hbs{font-family:'JetBrains Mono',monospace;font-size:0.52rem;color:var(--mu);margin-top:2px;}
+.qsgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.wk-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.wk-lbl{font-family:'JetBrains Mono',monospace;font-size:0.72rem;font-weight:700;color:var(--txt);}
+.arr{background:var(--sf);border:1px solid var(--b2);color:var(--txt);width:30px;height:30px;border-radius:7px;cursor:pointer;font-size:0.95rem;display:flex;align-items:center;justify-content:center;}
+.wsum{background:var(--c2);border:1px solid var(--b2);border-radius:9px;padding:9px;margin-bottom:8px;}
+.wsh{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.wst{font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--m2);}
+.wsd{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:2px;}
+.wsd.plus{color:var(--grn);}
+.wsd.minus{color:var(--red);}
+.wsd.neu{color:var(--m2);}
+.wsrow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;}
+.wsb{background:var(--sf);border-radius:6px;padding:6px;text-align:center;}
+.wsbv{font-family:'JetBrains Mono',monospace;font-size:0.76rem;font-weight:700;}
+.wsbk{font-family:'JetBrains Mono',monospace;font-size:0.48rem;letter-spacing:1px;text-transform:uppercase;color:var(--mu);margin-top:2px;}
+.day-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card);border:1px solid var(--brd);border-radius:9px;margin-bottom:6px;cursor:pointer;transition:opacity 0.15s;}
+.day-row:hover{opacity:0.82;}
+.day-row.has{border-color:var(--grn);}
+.day-row.miss{border-color:var(--red);border-style:dashed;}
+.day-row.we{cursor:default;opacity:0.45;}
+.day-row.today-row{border-color:var(--acc);}
+.dr-left{display:flex;align-items:center;gap:9px;}
+.dr-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;border:2px solid var(--b2);}
+.dr-name{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;letter-spacing:2px;}
+.dr-name.today-name{color:var(--acc);}
+.dr-sub{font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--m2);margin-top:1px;}
+.tbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:9px;}
+.tb{background:var(--sf);border:1px solid var(--b2);color:var(--m2);font-family:'JetBrains Mono',monospace;font-size:0.56rem;text-transform:uppercase;padding:7px 3px;border-radius:8px;cursor:pointer;text-align:center;}
+.tb[data-t="work"].on{background:rgba(255,209,102,0.12);border-color:var(--acc);color:var(--acc);font-weight:700;}
+.tb[data-t="vacation"].on{background:rgba(6,214,160,0.12);border-color:var(--grn);color:var(--grn);font-weight:700;}
+.tb[data-t="overtime"].on{background:rgba(17,138,178,0.12);border-color:var(--blu);color:var(--blu);font-weight:700;}
+.tb[data-t="sick"].on{background:rgba(239,71,111,0.12);border-color:var(--red);color:var(--red);font-weight:700;}
+.tb[data-t="holiday"].on{background:rgba(155,114,207,0.12);border-color:var(--pur);color:var(--pur);font-weight:700;}
+#pin-screen{position:fixed;inset:0;background:var(--bg);z-index:8000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:28px;}
+.pin-logo{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:5px;color:var(--acc);margin-bottom:3px;}
+.pin-sub{font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--mu);letter-spacing:3px;text-transform:uppercase;margin-bottom:28px;}
+.pin-dots{display:flex;gap:13px;margin-bottom:24px;}
+.pd{width:14px;height:14px;border-radius:50%;border:2px solid var(--b2);background:transparent;transition:all 0.15s;}
+.pd.on{background:var(--acc);border-color:var(--acc);}
+.pd.err{background:var(--red);border-color:var(--red);}
+.pin-msg{font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--m2);margin-bottom:13px;text-align:center;min-height:16px;}
+.pin-msg.err{color:var(--red);}
+.pin-msg.ok{color:var(--grn);}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:260px;}
+.pk{background:var(--card);border:1px solid var(--b2);border-radius:12px;padding:15px;text-align:center;cursor:pointer;user-select:none;}
+.pk:active{background:var(--c2);transform:scale(0.93);}
+.pk-n{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px;color:var(--txt);line-height:1;}
+.pk-l{font-family:'JetBrains Mono',monospace;font-size:0.44rem;color:var(--mu);letter-spacing:1px;text-transform:uppercase;margin-top:1px;}
+.pk.del{background:var(--sf);}
+.pk.del .pk-n{font-size:1.05rem;color:var(--m2);}
+.pk.emp{background:transparent;border:none;cursor:default;}
+</style>
+</head>
+<body>
+
+<div id="pin-screen">
+  <div class="pin-logo">🔐 ZEITERFASSUNG</div>
+  <div class="pin-sub">PIN eingeben</div>
+  <div class="pin-dots">
+    <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div>
+    <div class="pd" id="pd2"></div><div class="pd" id="pd3"></div>
+  </div>
+  <div class="pin-msg" id="pin-msg">Bitte PIN eingeben</div>
+  <div class="pin-pad">
+    <div class="pk" onclick="pp('1')"><div class="pk-n">1</div></div>
+    <div class="pk" onclick="pp('2')"><div class="pk-n">2</div><div class="pk-l">ABC</div></div>
+    <div class="pk" onclick="pp('3')"><div class="pk-n">3</div><div class="pk-l">DEF</div></div>
+    <div class="pk" onclick="pp('4')"><div class="pk-n">4</div><div class="pk-l">GHI</div></div>
+    <div class="pk" onclick="pp('5')"><div class="pk-n">5</div><div class="pk-l">JKL</div></div>
+    <div class="pk" onclick="pp('6')"><div class="pk-n">6</div><div class="pk-l">MNO</div></div>
+    <div class="pk" onclick="pp('7')"><div class="pk-n">7</div><div class="pk-l">PQRS</div></div>
+    <div class="pk" onclick="pp('8')"><div class="pk-n">8</div><div class="pk-l">TUV</div></div>
+    <div class="pk" onclick="pp('9')"><div class="pk-n">9</div><div class="pk-l">WXYZ</div></div>
+    <div class="pk emp"></div>
+    <div class="pk" onclick="pp('0')"><div class="pk-n">0</div></div>
+    <div class="pk del" onclick="pdel()"><div class="pk-n">⌫</div></div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+<div class="hdr">
+  <div><h1>ZEITERFASSUNG</h1><div class="sub">Pro · v5.0</div></div>
+  <div class="hdr-r"><div class="ebadge" id="empBadge">—</div><div class="einfo" id="empInfo">—</div></div>
+</div>
+<div class="ebar" id="empBar"><div class="eadd" onclick="openAddEmp()">+ Mitarbeiter</div></div>
+<div class="nav" id="mainNav">
+  <div class="nt on" onclick="nav('home')">🏠 Home</div>
+  <div class="nt" onclick="nav('eingabe')">✏️ Eingabe</div>
+  <div class="nt" onclick="nav('woche')">📅 Woche</div>
+  <div class="nt" onclick="nav('stats')">📊 Jahr</div>
+  <div class="nt" onclick="nav('summe')">➕ Summe</div>
+  <div class="nt" onclick="nav('steuer')">🧾 Steuer</div>
+  <div class="nt" onclick="nav('uw')">💸 Zahlungen</div>
+  <div class="nt" onclick="nav('ausgaben')">🧾 Ausgaben</div>
+  <div class="nt" onclick="nav('verlauf')">📋 Verlauf</div>
+  <div class="nt" onclick="nav('team')">👥 Team</div>
+  <div class="nt" onclick="nav('einst')">⚙️ Einst.</div>
+</div>
+
+<!-- HOME -->
+<div class="pg on" id="pg-home">
+  <div class="home-greet">
+    <div class="hav" id="hAv" style="background:var(--acc)">—</div>
+    <div><div class="hname" id="hGreet">Guten Tag!</div><div class="hdate" id="hDate">—</div></div>
+  </div>
+  <div class="card" style="border-color:var(--acc)">
+    <div class="chd"><div class="dot"></div>⚡ Heute schnell eintragen</div>
+    <div class="g2">
+      <div><label class="lbl">Beginn</label><input type="time" id="h-s" value="08:00"></div>
+      <div><label class="lbl">Feierabend</label><input type="time" id="h-e" value="16:30"></div>
+    </div>
+    <div class="g2">
+      <div><label class="lbl">Pause Min</label><input type="number" id="h-b" value="30" min="0"></div>
+      <div><label class="lbl">Notiz</label><input type="text" id="h-n" placeholder="Optional..."></div>
+    </div>
+    <div class="note" id="h-status"></div>
+    <button class="btn bp" onclick="saveToday()">✅ HEUTE SPEICHERN</button>
+  </div>
+  <div class="hgrid">
+    <div class="hbox"><div class="hbv" id="hOT">00:00</div><div class="hbk">Überstunden</div><div class="hbs" id="hOTsub">—</div></div>
+    <div class="hbox"><div class="hbv vac" id="hVac">—</div><div class="hbk">Resturlaub</div><div class="hbs" id="hVacSub">—</div></div>
+  </div>
+  <div class="card"><div class="chd"><div class="dot" style="background:var(--blu)"></div>📅 Diese Woche</div><div id="hWeek"></div></div>
+  <div class="card" id="hNoteCard" style="display:none"><div class="chd"><div class="dot" style="background:var(--pur)"></div>💬 Letzte Notizen</div><div id="hNotes"></div></div>
+  <div class="card"><div class="chd"><div class="dot" style="background:var(--grn)"></div>🔗 Schnellzugriff</div>
+    <div class="qsgrid">
+      <button class="btn bg" onclick="nav('woche')" style="font-size:0.76rem;padding:9px">📅 Woche</button>
+      <button class="btn bg" onclick="nav('stats')" style="font-size:0.76rem;padding:9px">📊 Jahr</button>
+      <button class="btn bg" onclick="nav('verlauf')" style="font-size:0.76rem;padding:9px">📋 Verlauf</button>
+      <button class="btn bg" onclick="nav('steuer')" style="font-size:0.76rem;padding:9px">🧾 Steuer</button>
+      <button class="btn bg" onclick="nav('uw')" style="font-size:0.76rem;padding:9px">💸 Zahlungen</button>
+      <button class="btn bg" onclick="nav('team')" style="font-size:0.76rem;padding:9px">👥 Team</button>
+    </div>
+  </div>
+  <!-- BACKUP REMINDER -->
+  <div class="card" style="border-color:var(--acc)">
+    <div class="chd"><div class="dot" style="background:var(--acc)"></div>💾 Daten sichern</div>
+    <div class="note" style="margin-bottom:9px">⚠️ Sichere deine Daten bevor du die App neu herunterlädst!</div>
+    <button class="btn bp" onclick="copyBackupText()" style="margin-bottom:6px">📋 BACKUP KOPIEREN → IN NOTIZEN EINFÜGEN</button>
+    <button class="btn bg" onclick="saveToGDrive()">☁️ ALS DATEI TEILEN / DRIVE</button>
+    <div id="copyStatus" style="display:none"></div>
+    <div style="margin-top:8px;background:var(--sf);border-radius:8px;padding:9px;font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--m2);line-height:1.7">
+      1. <strong style="color:var(--acc)">📋 KOPIEREN</strong> tippen<br>
+      2. In <strong style="color:var(--acc)">Google Keep</strong> einfügen &amp; speichern<br>
+      3. Neue App öffnen → ⚙️ → <strong style="color:var(--grn)">📝 AUS TEXT EINFÜGEN</strong> ✅
+    </div>
+  </div>
+</div>
+
+<!-- EINGABE -->
+<div class="pg" id="pg-eingabe">
+  <div class="bann">
+    <div><div class="bl">Gesamt Überstunden</div><div class="bv" id="totOT">00:00</div><div class="bs" id="totOTsub">0 Tage</div></div>
+    <div style="text-align:right"><div class="bl">Diese Woche</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px" id="wkOT">00:00</div><div class="bs" id="wkDays">0/5</div></div>
+  </div>
+  <div class="card">
+    <div class="chd"><div class="dot"></div>Art des Tages</div>
+    <div class="tbtns">
+      <div class="tb on" data-t="work" onclick="setT('work')">⏱ Arbeit</div>
+      <div class="tb" data-t="vacation" onclick="setT('vacation')">🌴 Urlaub</div>
+      <div class="tb" data-t="overtime" onclick="setT('overtime')">⚡ ÜST-Abbau</div>
+      <div class="tb" data-t="sick" onclick="setT('sick')">🤒 Krank</div>
+      <div class="tb" data-t="holiday" onclick="setT('holiday')">🎉 Feiertag</div>
+    </div>
+    <div class="fld"><label class="lbl">Datum</label>
+      <div class="hf"><input type="date" id="eDate" style="flex:1"><button class="btn bp bsm" onclick="setTodayDate()">HEUTE</button></div>
+    </div>
+    <div id="workForm">
+      <div class="g2">
+        <div><label class="lbl">Beginn</label><input type="time" id="eStart" value="08:00"></div>
+        <div><label class="lbl">Feierabend</label><input type="time" id="eEnd" value="16:30"></div>
+      </div>
+      <div class="fld"><label class="lbl">Pause Min</label><input type="number" id="eBrk" value="30" min="0"></div>
+    </div>
+    <div id="specForm" style="display:none">
+      <div class="fld"><label class="lbl">Anzahl Tage</label><input type="number" id="specDays" value="1" min="1" max="365"></div>
+      <div class="note" id="specNote"></div>
+    </div>
+    <div class="fld"><label class="lbl">💬 Notiz</label><input type="text" id="eNote" placeholder="Optional..."></div>
+    <button class="btn bp" onclick="saveEntry()">SPEICHERN</button>
+  </div>
+  <div class="card" id="dayResCard" style="display:none">
+    <div class="chd"><div class="dot" style="background:var(--grn)"></div>Tagesergebnis</div>
+    <div id="dayResBody"></div>
+  </div>
+  <div class="card" id="noteCard" style="display:none">
+    <div class="chd"><div class="dot" style="background:var(--pur)"></div>💬 Notiz</div>
+    <div id="noteBody"></div>
+  </div>
+</div>
+
+<!-- WOCHE -->
+<div class="pg" id="pg-woche">
+  <div class="card">
+    <div class="wk-nav">
+      <button class="arr" onclick="shiftWk(-1)">‹</button>
+      <span class="wk-lbl" id="wkLabel">—</span>
+      <button class="arr" onclick="shiftWk(1)">›</button>
+    </div>
+    <div class="wsum">
+      <div class="wsh"><span class="wst">Woche Gesamt</span><span class="wsd" id="wksDiff">—</span></div>
+      <div class="wsrow">
+        <div class="wsb"><div class="wsbv" id="wksW">—</div><div class="wsbk">Gearbeitet</div></div>
+        <div class="wsb"><div class="wsbv" id="wksS">—</div><div class="wsbk">Soll</div></div>
+        <div class="wsb"><div class="wsbv" id="wksD">—</div><div class="wsbk">Tage</div></div>
+      </div>
+    </div>
+  </div>
+  <div id="wkOverview"></div>
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--grn)"></div>⚡ Alle fehlenden Tage auf einmal</div>
+    <div class="note" style="margin-bottom:7px">Bereits eingetragene Tage werden NICHT überschrieben.</div>
+    <div class="g2">
+      <div><label class="lbl">Beginn (alle)</label><input type="time" id="wa-s" value="08:00"></div>
+      <div><label class="lbl">Feierabend (alle)</label><input type="time" id="wa-e" value="16:30"></div>
+    </div>
+    <div class="fld"><label class="lbl">Pause Min</label><input type="number" id="wa-b" value="30" min="0"></div>
+    <button class="btn bp" onclick="saveAllWk()">FEHLENDE TAGE EINTRAGEN</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="pg" id="pg-stats">
+  <div class="yr-row"><label class="lbl" style="white-space:nowrap;margin:0">Jahr:</label><select id="statsYr" onchange="renderStats()"></select></div>
+  <div class="sg" id="statBoxes"></div>
+  <div id="statDetail"></div>
+</div>
+
+<!-- SUMME -->
+<div class="pg" id="pg-summe">
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--blu)"></div>Kalenderwochen summieren</div>
+    <div id="kwList" style="display:flex;flex-direction:column;gap:5px;margin-bottom:7px;"></div>
+    <div style="display:flex;gap:6px;margin-bottom:9px;">
+      <button class="btn bp bsm" onclick="addKW()">+ KW</button>
+      <button class="btn bg bsm" onclick="clearKW()">Leeren</button>
+    </div>
+    <div id="kwRes" style="display:none"><div style="border-top:1px solid var(--brd);padding-top:9px;">
+      <div class="rr"><span class="rl">KWs</span><span class="rv" id="kw-c">—</span></div>
+      <div class="rr"><span class="rl">Gearbeitet</span><span class="rv big" id="kw-w">—</span></div>
+      <div class="rr"><span class="rl">Soll</span><span class="rv" id="kw-s">—</span></div>
+      <div class="rr"><span class="rl">Über/Minus</span><span class="rv big" id="kw-d">—</span></div>
+    </div></div>
+    <button class="btn bp" onclick="calcKW()">BERECHNEN</button>
+  </div>
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--pur)"></div>Monate summieren</div>
+    <div id="moList" style="display:flex;flex-direction:column;gap:5px;margin-bottom:7px;"></div>
+    <div style="display:flex;gap:6px;margin-bottom:9px;">
+      <button class="btn bp bsm" onclick="addMo()">+ Monat</button>
+      <button class="btn bg bsm" onclick="clearMo()">Leeren</button>
+    </div>
+    <div id="moRes" style="display:none"><div style="border-top:1px solid var(--brd);padding-top:9px;">
+      <div class="rr"><span class="rl">Monate</span><span class="rv" id="mo-c">—</span></div>
+      <div class="rr"><span class="rl">Gearbeitet</span><span class="rv big" id="mo-w">—</span></div>
+      <div class="rr"><span class="rl">Soll</span><span class="rv" id="mo-s">—</span></div>
+      <div class="rr"><span class="rl">Über/Minus</span><span class="rv big" id="mo-d">—</span></div>
+      <div class="rr"><span class="rl">Urlaub</span><span class="rv" id="mo-v">—</span></div>
+      <div class="rr"><span class="rl">Krank</span><span class="rv" id="mo-k">—</span></div>
+    </div></div>
+    <button class="btn bp" onclick="calcMo()">BERECHNEN</button>
+  </div>
+</div>
+
+<!-- STEUER -->
+<div class="pg" id="pg-steuer">
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--acc)"></div>🧾 Steuer & Lohn</div>
+    <div class="note" style="margin-bottom:9px">Alle Felder werden automatisch gespeichert.</div>
+
+    <!-- Persönliche Daten -->
+    <div class="g2">
+      <div class="fld"><label class="lbl">Brutto/Monat €</label><input type="number" id="tx-br" placeholder="3000" oninput="saveSteuerData()"></div>
+      <div class="fld"><label class="lbl">Steuerklasse</label>
+        <select id="tx-sk" onchange="saveSteuerData()"><option value="1">Kl.1 Ledig</option><option value="2">Kl.2 Alleinerz.</option><option value="3">Kl.3 Verheiratet h.</option><option value="4">Kl.4 Verheiratet</option><option value="5">Kl.5 Verheiratet n.</option><option value="6">Kl.6 Zweitjob</option></select>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">Bundesland</label>
+        <select id="tx-bl" onchange="updKirche();saveSteuerData()">
+          <option value="BY">Bayern</option><option value="BW">Baden-Württemberg</option><option value="BE">Berlin</option><option value="BB">Brandenburg</option><option value="HB">Bremen</option><option value="HH">Hamburg</option><option value="HE">Hessen</option><option value="MV">Mecklenburg-Vorp.</option><option value="NI">Niedersachsen</option><option value="NW" selected>Nordrhein-Westfalen</option><option value="RP">Rheinland-Pfalz</option><option value="SL">Saarland</option><option value="SN">Sachsen</option><option value="ST">Sachsen-Anhalt</option><option value="SH">Schleswig-Holstein</option><option value="TH">Thüringen</option>
+        </select>
+      </div>
+      <div class="fld"><label class="lbl">Kirchensteuer</label>
+        <select id="tx-ki" onchange="saveSteuerData()"><option value="0">Nein</option><option value="0.08">Ja 8%</option><option value="0.09">Ja 9%</option></select>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">Alter</label><input type="number" id="tx-al" placeholder="30" oninput="saveSteuerData()"></div>
+      <div class="fld"><label class="lbl">Kinder</label><input type="number" id="tx-ki2" placeholder="0" step="0.5" oninput="saveSteuerData()"></div>
+    </div>
+
+    <div style="border-top:1px solid var(--brd);margin:10px 0 10px"></div>
+
+    <!-- Fahrtkosten & Werbungskosten -->
+    <div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--m2);margin-bottom:7px">🚗 Fahrtkosten & Werbungskosten</div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">km Arbeitsweg (einfach)</label><input type="number" id="wk-km" placeholder="0" oninput="saveSteuerData()"></div>
+      <div class="fld"><label class="lbl">Homeoffice-Tage/Jahr</label><input type="number" id="wk-ho" placeholder="0" oninput="saveSteuerData()"></div>
+    </div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">Arbeitsmittel €</label><input type="number" id="wk-am" placeholder="0" oninput="saveSteuerData()"></div>
+      <div class="fld"><label class="lbl">Fortbildung €</label><input type="number" id="wk-fb" placeholder="0" oninput="saveSteuerData()"></div>
+    </div>
+    <div class="fld"><label class="lbl">Gewerkschaft €/Jahr</label><input type="number" id="wk-gw" placeholder="0" oninput="saveSteuerData()"></div>
+
+    <div style="border-top:1px solid var(--brd);margin:10px 0 10px"></div>
+
+    <!-- Ausgaben für Steuerersparnis -->
+    <div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--m2);margin-bottom:7px">📋 Weitere absetzbare Ausgaben</div>
+    <div class="note" style="margin-bottom:7px">Aus deinen eingetragenen Ausgaben &amp; Zahlungen:</div>
+    <div class="yr-row"><label class="lbl" style="white-space:nowrap;margin:0">Steuerjahr:</label><select id="tx-yr" onchange="calcAlles()"></select></div>
+
+    <button class="btn bp" onclick="calcAlles()" style="margin-bottom:9px">🧮 ALLES BERECHNEN</button>
+
+    <!-- ERGEBNIS -->
+    <div id="steuerRes" style="display:none">
+      <!-- Netto -->
+      <div style="background:var(--c2);border-radius:9px;padding:11px;margin-bottom:9px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--acc);margin-bottom:7px">💰 Brutto → Netto</div>
+        <div class="rr"><span class="rl">Brutto/Monat</span><span class="rv" id="r-br">—</span></div>
+        <div class="rr"><span class="rl">Lohnsteuer</span><span class="rv minus" id="r-lst">—</span></div>
+        <div class="rr"><span class="rl">Soli + Kirche</span><span class="rv minus" id="r-sol">—</span></div>
+        <div class="rr"><span class="rl">Sozialabgaben</span><span class="rv minus" id="r-soz">—</span></div>
+        <div class="rr" style="border-top:2px solid var(--acc);margin-top:5px;padding-top:6px"><span class="rl" style="color:var(--acc)">NETTO/MONAT</span><span class="rv big plus" id="r-net">—</span></div>
+        <div class="rr"><span class="rl" style="color:var(--acc)">NETTO/JAHR</span><span class="rv big plus" id="r-netj">—</span></div>
+      </div>
+      <!-- Werbungskosten -->
+      <div style="background:var(--c2);border-radius:9px;padding:11px;margin-bottom:9px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--blu);margin-bottom:7px">🚗 Werbungskosten</div>
+        <div class="rr"><span class="rl">Fahrtkosten</span><span class="rv" id="wk-rf">—</span></div>
+        <div class="rr"><span class="rl">Homeoffice</span><span class="rv" id="wk-rh">—</span></div>
+        <div class="rr"><span class="rl">Arbeitsmittel + Fortbildung</span><span class="rv" id="wk-ra">—</span></div>
+        <div class="rr"><span class="rl">Gewerkschaft</span><span class="rv" id="wk-rg">—</span></div>
+        <div class="rr" style="border-top:1px solid var(--brd);margin-top:4px;padding-top:5px"><span class="rl">Gesamt Werbungskosten</span><span class="rv" id="wk-rges">—</span></div>
+        <div class="rr"><span class="rl">Pauschbetrag (1.230 €)</span><span class="rv">− 1.230 €</span></div>
+        <div class="rr"><span class="rl" style="color:var(--blu)">Über Pauschbetrag</span><span class="rv" id="wk-rub" style="color:var(--blu)">—</span></div>
+      </div>
+      <!-- Steuerersparnis -->
+      <div style="background:var(--c2);border-radius:9px;padding:11px;border:1px solid var(--grn)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--grn);margin-bottom:7px">🤖 Geschätzte Steuerersparnis</div>
+        <div class="rr"><span class="rl">Arbeitstage (aus Verlauf)</span><span class="rv" id="r-wd">—</span></div>
+        <div class="rr"><span class="rl">Elternzahlungen absetzbar</span><span class="rv" id="r-eltern">—</span></div>
+        <div class="rr"><span class="rl">Ausgaben (Arzt, Behörden...)</span><span class="rv" id="r-ab">—</span></div>
+        <div class="rr"><span class="rl">Handwerker (20% direkt)</span><span class="rv" id="r-hw">—</span></div>
+        <div class="rr" style="border-top:2px solid var(--grn);margin-top:5px;padding-top:6px"><span class="rl" style="color:var(--grn)">GESCHÄTZTE ERSPARNIS</span><span class="rv big plus" id="r-ers">—</span></div>
+        <div class="note" style="margin-top:5px">⚠️ Schätzung — für genaue Berechnung Taxfix/ELSTER nutzen.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ZAHLUNGEN -->
+<div class="pg" id="pg-uw">
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--grn)"></div>💸 Zahlung erfassen</div>
+    <div class="fld"><label class="lbl">Empfänger</label>
+      <select id="uw-emp" style="margin-bottom:5px"><option value="">— wählen —</option></select>
+      <div class="hf"><input type="text" id="uw-new" placeholder="Neuer Empfänger (z.B. Mama)"><button class="btn bp bsm" onclick="addRecip()">+</button></div>
+    </div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">Betrag €</label><input type="number" id="uw-bet" placeholder="0" step="0.01"></div>
+      <div class="fld"><label class="lbl">Datum</label><input type="date" id="uw-dat"></div>
+    </div>
+    <div class="fld"><label class="lbl">Notiz</label><input type="text" id="uw-not" placeholder="Optional..."></div>
+    <button class="btn bp" onclick="saveUW()">ZAHLUNG SPEICHERN</button>
+  </div>
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--acc)"></div>📊 Jahresübersicht</div>
+    <div class="yr-row"><label class="lbl" style="white-space:nowrap;margin:0">Jahr:</label><select id="uw-yr" onchange="renderUW()"></select></div>
+    <div id="uwSum"></div>
+  </div>
+  <div class="card"><div class="chd"><div class="dot" style="background:var(--blu)"></div>📋 Verlauf</div><div id="uwHist"></div></div>
+</div>
+
+<!-- AUSGABEN -->
+<div class="pg" id="pg-ausgaben">
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--acc)"></div>🧾 Ausgabe erfassen</div>
+    <div class="fld"><label class="lbl">Kategorie</label>
+      <select id="au-kat">
+        <option value="behoerde">🏛️ Behörden (Ausweis, Pass...)</option>
+        <option value="arzt">🏥 Arzt / Medikamente</option>
+        <option value="handwerker">🔧 Handwerker</option>
+        <option value="spende">❤️ Spenden</option>
+        <option value="versicherung">🛡️ Versicherungen</option>
+        <option value="steuerberater">📑 Steuerberater / Anwalt</option>
+        <option value="fortbildung">🎓 Fortbildung</option>
+        <option value="computer">💻 Arbeitsmittel</option>
+        <option value="brille">👓 Brille / Sehhilfe</option>
+        <option value="sonstiges">📎 Sonstiges</option>
+      </select>
+    </div>
+    <div class="fld"><label class="lbl">Beschreibung</label><input type="text" id="au-desc" placeholder="z.B. Personalausweis, Zahnarzt..."></div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">Betrag €</label><input type="number" id="au-bet" placeholder="0" step="0.01"></div>
+      <div class="fld"><label class="lbl">Datum</label><input type="date" id="au-dat"></div>
+    </div>
+    <div class="fld"><label class="lbl">Beleg?</label>
+      <select id="au-bel"><option value="ja">✅ Ja vorhanden</option><option value="digital">📱 Digital gespeichert</option><option value="nein">❌ Kein Beleg</option></select>
+    </div>
+    <button class="btn bp" onclick="saveAU()">AUSGABE SPEICHERN</button>
+  </div>
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--grn)"></div>📊 Jahresübersicht</div>
+    <div class="yr-row"><label class="lbl" style="white-space:nowrap;margin:0">Jahr:</label><select id="au-yr" onchange="renderAU()"></select></div>
+    <div id="auSum"></div>
+  </div>
+  <div class="card"><div class="chd"><div class="dot" style="background:var(--blu)"></div>📋 Alle Ausgaben</div><div id="auHist"></div></div>
+</div>
+
+<!-- VERLAUF -->
+<div class="pg" id="pg-verlauf">
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--pur)"></div>Filter</div>
+    <div class="g2">
+      <div><label class="lbl">Jahr</label><select id="vJahr" onchange="renderVerlauf()"></select></div>
+      <div><label class="lbl">Monat</label>
+        <select id="vMon" onchange="renderVerlauf()">
+          <option value="">Alle</option><option value="01">Januar</option><option value="02">Februar</option><option value="03">März</option><option value="04">April</option><option value="05">Mai</option><option value="06">Juni</option><option value="07">Juli</option><option value="08">August</option><option value="09">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Dezember</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="card"><div style="overflow-x:auto" id="verlaufContent"></div></div>
+</div>
+
+<!-- TEAM -->
+<div class="pg" id="pg-team">
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--grn)"></div>👥 Alle Mitarbeiter</div>
+    <div id="teamList"></div>
+    <button class="btn bp" style="margin-top:9px" onclick="openAddEmp()">+ MITARBEITER HINZUFÜGEN</button>
+  </div>
+  <div class="card"><div class="chd"><div class="dot" style="background:var(--blu)"></div>📊 Team Übersicht</div><div id="teamOV"></div></div>
+</div>
+
+<!-- EINSTELLUNGEN -->
+<div class="pg" id="pg-einst">
+  <div class="card"><div class="chd"><div class="dot" style="background:var(--acc)"></div>👤 Mein Profil</div><div id="profSet"></div></div>
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--grn)"></div>🎉 Feiertage</div>
+    <div class="note" style="margin-bottom:9px">Feiertage für dein Bundesland automatisch eintragen.</div>
+    <button class="btn bp" onclick="importHols()">FEIERTAGE EINTRAGEN</button>
+    <div id="holStatus" class="note" style="margin-top:7px;text-align:center"></div>
+  </div>
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--acc)"></div>Überträge Vorjahr</div>
+    <div class="fld"><label class="lbl">Überstunden Übertrag</label>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <select id="ot-sign" style="width:58px;flex-shrink:0"><option value="1">+</option><option value="-1">−</option></select>
+        <input type="number" id="ot-h" placeholder="0" min="0" style="flex:1">
+        <span style="font-family:'JetBrains Mono',monospace;color:var(--m2);font-size:0.82rem">Std.</span>
+        <input type="number" id="ot-m" placeholder="0" min="0" max="59" style="width:58px;flex-shrink:0">
+        <span style="font-family:'JetBrains Mono',monospace;color:var(--m2);font-size:0.82rem">Min.</span>
+      </div>
+    </div>
+    <div class="fld"><label class="lbl">Resturlaub Vorjahr (Tage)</label><input type="number" id="vac-carry" placeholder="0" min="0" max="60"></div>
+    <button class="btn bp" onclick="saveSet()">SPEICHERN</button>
+  </div>
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--blu)"></div>🔔 Erinnerung</div>
+    <div class="fld"><label class="lbl">Uhrzeit täglich</label><input type="time" id="rem-t" value="17:00"></div>
+    <div class="fld"><label class="lbl">Text</label><input type="text" id="rem-txt" value="Zeiten eintragen! ⏱"></div>
+    <button class="btn bp" onclick="enableRem()" style="margin-bottom:7px">🔔 AKTIVIEREN</button>
+    <button class="btn bg" onclick="disableRem()">🔕 DEAKTIVIEREN</button>
+    <div id="remStatus" class="note" style="margin-top:7px;text-align:center"></div>
+  </div>
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--red)"></div>🔐 PIN-Schutz</div>
+    <div id="pinSetStatus" class="note" style="margin-bottom:9px;text-align:center"></div>
+    <div id="pinSetForm">
+      <div class="fld"><label class="lbl">Neuer PIN (4 Stellen)</label><input type="password" id="pin-new" placeholder="••••" maxlength="4" inputmode="numeric"></div>
+      <div class="fld"><label class="lbl">Bestätigen</label><input type="password" id="pin-conf" placeholder="••••" maxlength="4" inputmode="numeric"></div>
+      <button class="btn bp" onclick="savePin()">🔐 PIN AKTIVIEREN</button>
+    </div>
+    <button class="btn bd" id="pinDisBtn" style="display:none;margin-top:7px" onclick="disPin()">🔓 PIN DEAKTIVIEREN</button>
+  </div>
+  <div class="card">
+    <div class="chd"><div class="dot" style="background:var(--grn)"></div>💾 Backup</div>
+
+    <!-- EXPORT -->
+    <div style="margin-bottom:11px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:1px;text-transform:uppercase;color:var(--acc);margin-bottom:6px">📤 Exportieren</div>
+      <button class="btn bp" onclick="copyBackupText()" style="margin-bottom:6px">📋 BACKUP KOPIEREN</button>
+      <div id="copyStatus" style="display:none;background:rgba(6,214,160,0.12);border:1px solid var(--grn);border-radius:8px;padding:9px;font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--grn);line-height:1.7;margin-bottom:6px">
+        ✓ Kopiert!<br>
+        Jetzt:<br>
+        1. <strong>Google Keep</strong> öffnen<br>
+        2. Neue Notiz → langer Druck → <strong>Einfügen</strong><br>
+        3. Notiz speichern ✅
+      </div>
+      <button class="btn bg" onclick="saveToGDrive()">☁️ ALS DATEI TEILEN / DRIVE</button>
+    </div>
+
+    <!-- IMPORT — always visible, not hidden -->
+    <div style="background:rgba(6,214,160,0.06);border:2px solid var(--grn);border-radius:9px;padding:12px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:1px;text-transform:uppercase;color:var(--grn);margin-bottom:8px">📥 Importieren</div>
+
+      <div class="note" style="margin-bottom:6px">Text aus Google Keep / Notizen hier einfügen:</div>
+      <textarea id="pasteText" rows="3" placeholder="Backup-Text hier einfügen (langes Drücken → Einfügen)..." style="font-size:0.65rem;margin-bottom:7px;border-color:var(--grn)"></textarea>
+      <button class="btn bp" onclick="impFromText()" style="margin-bottom:10px;background:var(--grn)">✅ AUS TEXT IMPORTIEREN</button>
+
+      <div style="border-top:1px solid var(--b2);padding-top:9px">
+        <div class="note" style="margin-bottom:6px">Oder JSON-Datei wählen:</div>
+        <div style="background:var(--sf);border:2px dashed var(--b2);border-radius:8px;padding:11px;text-align:center;cursor:pointer;" onclick="document.getElementById('impFile').click()">
+          <div style="font-size:1rem;margin-bottom:2px">📂</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--m2)">Backup-Datei wählen (.json)</div>
+        </div>
+      </div>
+      <input type="file" id="impFile" accept=".json" style="display:none" onchange="impData(event)">
+      <div id="impStatus" class="note" style="text-align:center;margin-top:5px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DAY POPUP -->
+<div class="mo" id="dayPopup">
+  <div class="mo-box">
+    <div class="mo-title" id="popup-title">—</div>
+    <div class="note" style="margin-bottom:9px">Art des Tages wählen:</div>
+    <div id="popup-types" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:13px;"></div>
+    <div id="popup-work">
+      <div class="note" style="margin-bottom:7px">Zeiten eintragen:</div>
+      <div class="g2" style="margin-bottom:7px">
+        <div><label class="lbl">Beginn</label><input type="time" id="popup-ps" value="08:00"></div>
+        <div><label class="lbl">Feierabend</label><input type="time" id="popup-pe" value="16:30"></div>
+      </div>
+      <div class="fld"><label class="lbl">Pause Min</label><input type="number" id="popup-pb" value="30" min="0"></div>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:4px;">
+      <button class="btn bp" onclick="popupSave()">💾 SPEICHERN</button>
+      <button class="btn bg bsm" onclick="closeDayPopup()" style="flex-shrink:0;padding:11px 14px">✕</button>
+    </div>
+    <button id="popup-del" class="btn bd" onclick="popupDelete()" style="margin-top:7px;display:none">🗑️ EINTRAG LÖSCHEN</button>
+  </div>
+</div>
+
+<!-- EMP MODAL -->
+<div class="mo" id="empModal">
+  <div class="mo-box">
+    <div class="mo-title" id="empModalTitle">MITARBEITER</div>
+    <div class="fld"><label class="lbl">Name</label><input type="text" id="emp-name" placeholder="Max Mustermann"></div>
+    <div class="fld"><label class="lbl">Avatar Farbe</label><div class="swatches" id="colorPicker"></div></div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">Soll-Stunden/Tag</label>
+        <select id="emp-soll"><option value="360">6h</option><option value="420">7h</option><option value="480" selected>8h</option><option value="540">9h</option><option value="600">10h</option></select>
+      </div>
+      <div class="fld"><label class="lbl">Urlaubstage/Jahr</label><input type="number" id="emp-vac" value="30" min="1" max="60"></div>
+    </div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">Bundesland</label>
+        <select id="emp-bl"><option value="BY">Bayern</option><option value="BW">Baden-Württemberg</option><option value="BE">Berlin</option><option value="BB">Brandenburg</option><option value="HB">Bremen</option><option value="HH">Hamburg</option><option value="HE">Hessen</option><option value="MV">Mecklenb.-Vorp.</option><option value="NI">Niedersachsen</option><option value="NW" selected>NRW</option><option value="RP">Rheinland-Pfalz</option><option value="SL">Saarland</option><option value="SN">Sachsen</option><option value="ST">Sachsen-Anhalt</option><option value="SH">Schleswig-Holstein</option><option value="TH">Thüringen</option></select>
+      </div>
+      <div class="fld"><label class="lbl">Position</label><input type="text" id="emp-pos" placeholder="z.B. Lager"></div>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:4px;">
+      <button class="btn bp" onclick="saveEmp()">SPEICHERN</button>
+      <button class="btn bg bsm" onclick="closeModal()" style="flex-shrink:0;padding:11px 14px">ABB.</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- end #app -->
+<div id="toast">✓</div>
+
+<script>
+// ===== CONSTANTS =====
+const VER='5.0',VK='ztpro_ver',EK='ztpro_emps';
+const DPX='ztpro_d_',SPX='ztpro_s_',UWK='ztpro_uw',AUK='ztpro_au',PK='ztpro_pin';
+const MN=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const COLORS=['#ffd166','#06d6a0','#ef476f','#118ab2','#9b72cf','#f4845f','#43bccd','#84bc9c','#e07a5f','#81b29a'];
+const BLN={BY:'Bayern',BW:'Baden-Württemberg',BE:'Berlin',BB:'Brandenburg',HB:'Bremen',HH:'Hamburg',HE:'Hessen',MV:'Mecklenburg-Vorpommern',NI:'Niedersachsen',NW:'Nordrhein-Westfalen',RP:'Rheinland-Pfalz',SL:'Saarland',SN:'Sachsen',ST:'Sachsen-Anhalt',SH:'Schleswig-Holstein',TH:'Thüringen'};
+const TCOL={work:'var(--acc)',vacation:'var(--grn)',overtime:'var(--blu)',sick:'var(--red)',holiday:'var(--pur)'};
+const TLBL={work:'⏱ Arbeit',vacation:'🌴 Urlaub',overtime:'⚡ ÜST-Abbau',sick:'🤒 Krank',holiday:'🎉 Feiertag'};
+const TICON={work:'⏱',vacation:'🌴',overtime:'⚡',sick:'🤒',holiday:'🎉'};
+
+// ===== STATE =====
+let aEmp=null,editEmp=null,selColor=COLORS[0],wkOff=0,curType='work',popupDs='';
+
+// ===== STORAGE — alle Daten bleiben bis User löscht =====
+function ldEmps(){try{return JSON.parse(localStorage.getItem(EK))||[];}catch{return[];}}
+function svEmps(e){localStorage.setItem(EK,JSON.stringify(e));}
+function getEmp(id){return ldEmps().find(e=>e.id===id)||null;}
+function ldData(){if(!aEmp)return{};try{return JSON.parse(localStorage.getItem(DPX+aEmp))||{};}catch{return{};}}
+function svData(d){if(aEmp)localStorage.setItem(DPX+aEmp,JSON.stringify(d));}
+function ldSet(){if(!aEmp)return{otMins:0,vacCarry:0};try{return JSON.parse(localStorage.getItem(SPX+aEmp))||{otMins:0,vacCarry:0};}catch{return{otMins:0,vacCarry:0};}}
+function svSet(s){if(aEmp)localStorage.setItem(SPX+aEmp,JSON.stringify(s));}
+function ldUW(){try{return JSON.parse(localStorage.getItem(UWK))||{r:[],z:[]};}catch{return{r:[],z:[]};}}
+function svUW(d){localStorage.setItem(UWK,JSON.stringify(d));}
+function ldAU(){try{return JSON.parse(localStorage.getItem(AUK))||[];}catch{return[];}}
+function svAU(d){localStorage.setItem(AUK,JSON.stringify(d));}
+
+// ===== HELPERS =====
+function today(){return fmt(new Date());}
+function fmt(d){return d.toISOString().slice(0,10);}
+function parseD(s){return new Date(s+'T12:00:00');}
+function addD(s,n){const d=parseD(s);d.setDate(d.getDate()+n);return fmt(d);}
+function isWD(s){const w=parseD(s).getDay();return w>=1&&w<=5;}
+function monOf(s){const d=parseD(s);const wd=d.getDay()||7;const m=new Date(d);m.setDate(d.getDate()-wd+1);return fmt(m);}
+function hm(m,p=false){if(m===null||m===undefined||isNaN(m))return'00:00';const n=m<0;const a=Math.abs(Math.round(m));const h=Math.floor(a/60),mi=a%60;return(n?'-':(p&&m>0?'+':''))+String(h).padStart(2,'0')+':'+String(mi).padStart(2,'0');}
+function cl(d){return d>0?'plus':d<0?'minus':'neu';}
+function eur(n){return n.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';}
+function ini(name){return name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2);}
+function getSoll(){const e=getEmp(aEmp);return e?e.soll:480;}
+function getVac(){const e=getEmp(aEmp);return e?e.vac:30;}
+function getBL(){const e=getEmp(aEmp);return e?e.bl:'NW';}
+function toast(m,e=false){const t=document.getElementById('toast');t.textContent=m;t.className=e?'err on':'on';setTimeout(()=>t.className=e?'err':'',2300);}
+
+// ===== INIT =====
+window.onload=function(){
+  // Version banner
+  const sv=localStorage.getItem(VK);
+  if(sv&&sv!==VER){
+    const b=document.createElement('div');
+    b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--grn);color:#000;font-family:monospace;font-size:0.72rem;font-weight:700;padding:8px;text-align:center;cursor:pointer;';
+    b.textContent='✅ App v'+VER+' — Tippe zum Neu laden';
+    b.onclick=()=>{localStorage.setItem(VK,VER);location.reload(true);};
+    document.body.prepend(b);
+  }
+  localStorage.setItem(VK,VER);
+  // PIN check
+  const pin=localStorage.getItem(PK);
+  if(pin){document.getElementById('pin-screen').style.display='flex';}
+  else{showApp();}
+};
+
+function showApp(){
+  document.getElementById('pin-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  const emps=ldEmps();
+  if(emps.length>0)aEmp=emps[0].id;
+  renderEmpBar();updHeader();
+  document.getElementById('eDate').value=today();
+  document.getElementById('eDate').addEventListener('change',loadDayRes);
+  document.getElementById('au-dat').value=today();
+  document.getElementById('uw-dat').value=today();
+  buildYrSels();loadDayRes();updBanners();renderColors();renderHome();initRem();
+  if(emps.length===0)setTimeout(openAddEmp,400);
+}
+
+// ===== PIN =====
+let pinBuf='';
+function pp(d){if(pinBuf.length>=4)return;pinBuf+=d;updDots();if(pinBuf.length===4)setTimeout(chkPin,100);}
+function pdel(){if(pinBuf.length>0){pinBuf=pinBuf.slice(0,-1);updDots();document.getElementById('pin-msg').textContent='Bitte PIN eingeben';document.getElementById('pin-msg').className='pin-msg';}}
+function updDots(st=''){for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);d.className='pd';if(i<pinBuf.length)d.classList.add(st||'on');}}
+function chkPin(){
+  const p=localStorage.getItem(PK);
+  if(pinBuf===p){updDots('on');document.getElementById('pin-msg').className='pin-msg ok';document.getElementById('pin-msg').textContent='✓ Willkommen!';setTimeout(showApp,400);}
+  else{updDots('err');document.getElementById('pin-msg').className='pin-msg err';document.getElementById('pin-msg').textContent='❌ Falscher PIN!';setTimeout(()=>{pinBuf='';updDots();document.getElementById('pin-msg').textContent='Nochmal versuchen';document.getElementById('pin-msg').className='pin-msg';},700);}
+}
+function savePin(){
+  const p1=document.getElementById('pin-new').value,p2=document.getElementById('pin-conf').value;
+  if(!/^\d{4}$/.test(p1)){toast('PIN muss 4 Ziffern haben!',true);return;}
+  if(p1!==p2){toast('PINs stimmen nicht überein!',true);return;}
+  localStorage.setItem(PK,p1);
+  document.getElementById('pin-new').value='';document.getElementById('pin-conf').value='';
+  toast('✓ PIN aktiviert!');ldPinSet();
+}
+function disPin(){if(!confirm('PIN deaktivieren?'))return;localStorage.removeItem(PK);toast('✓ Deaktiviert');ldPinSet();}
+function ldPinSet(){
+  const p=localStorage.getItem(PK);
+  const st=document.getElementById('pinSetStatus'),frm=document.getElementById('pinSetForm'),btn=document.getElementById('pinDisBtn');
+  if(p){st.textContent='✅ PIN aktiv';st.style.color='var(--grn)';frm.style.display='none';btn.style.display='block';}
+  else{st.textContent='🔓 Kein PIN gesetzt';st.style.color='var(--m2)';frm.style.display='block';btn.style.display='none';}
+}
+
+// ===== EMP BAR =====
+function renderEmpBar(){
+  const emps=ldEmps();const bar=document.getElementById('empBar');bar.innerHTML='';
+  emps.forEach(e=>{
+    const c=document.createElement('div');c.className='ec'+(e.id===aEmp?' on':'');
+    c.innerHTML='<div class="eav" style="background:'+e.color+'">'+ini(e.name)+'</div><span class="ecn">'+e.name.split(' ')[0]+'</span>';
+    c.onclick=()=>switchEmp(e.id);bar.appendChild(c);
+  });
+  const a=document.createElement('div');a.className='eadd';a.textContent='+ Mitarbeiter';a.onclick=openAddEmp;bar.appendChild(a);
+}
+function updHeader(){
+  const e=getEmp(aEmp);
+  document.getElementById('empBadge').textContent=e?e.name:'Kein Profil';
+  document.getElementById('empInfo').textContent=e?hm(e.soll)+'h · '+e.vac+'d · '+(BLN[e.bl]||e.bl):'—';
+}
+function switchEmp(id){
+  aEmp=id;renderEmpBar();updHeader();updBanners();loadDayRes();buildYrSels();
+  const cur=document.querySelector('.pg.on');
+  if(cur){
+    const pid=cur.id.replace('pg-','');
+    if(pid==='home')renderHome();
+    else if(pid==='stats')renderStats();
+    else if(pid==='verlauf')renderVerlauf();
+    else if(pid==='team')renderTeam();
+    else if(pid==='woche'){renderWk();updWkSum();}
+    else if(pid==='einst')ldSettings();
+  }
+}
+
+// ===== NAVIGATION =====
+const PAGES=['home','eingabe','woche','stats','summe','steuer','uw','ausgaben','verlauf','team','einst'];
+function nav(n){
+  if(!aEmp&&n!=='team'&&n!=='einst'){toast('Bitte Mitarbeiter anlegen!',true);openAddEmp();return;}
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nt').forEach((t,i)=>t.classList.toggle('on',PAGES[i]===n));
+  document.getElementById('pg-'+n).classList.add('on');
+  if(n==='home')renderHome();
+  else if(n==='eingabe')updBanners();
+  else if(n==='woche'){renderWk();updWkSum();}
+  else if(n==='stats'){buildYrSels();renderStats();}
+  else if(n==='summe')initSumme();
+  else if(n==='steuer')initSteuer();
+  else if(n==='uw')initUW();
+  else if(n==='ausgaben')initAU();
+  else if(n==='verlauf'){buildYrSels();renderVerlauf();}
+  else if(n==='team')renderTeam();
+  else if(n==='einst')ldSettings();
+}
+
+// ===== HOME =====
+function renderHome(){
+  if(!aEmp)return;
+  const e=getEmp(aEmp);const h=new Date().getHours();
+  document.getElementById('hGreet').textContent=(h<12?'Guten Morgen':h<17?'Guten Tag':'Guten Abend')+', '+e.name.split(' ')[0]+'!';
+  document.getElementById('hDate').textContent=new Date().toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('hAv').textContent=ini(e.name);document.getElementById('hAv').style.background=e.color;
+  const d=ldData();const t=today();const te=d[t];const st=document.getElementById('h-status');
+  if(te&&te.type==='work'){st.textContent='✅ Heute: '+te.start+' – '+te.end;st.style.color='var(--grn)';document.getElementById('h-s').value=te.start;document.getElementById('h-e').value=te.end;document.getElementById('h-b').value=te.brk;document.getElementById('h-n').value=te.notiz||'';}
+  else if(te){st.textContent='📌 Heute: '+({vacation:'Urlaub 🌴',sick:'Krank 🤒',holiday:'Feiertag 🎉',overtime:'ÜST-Abbau ⚡'}[te.type]||te.type);st.style.color='var(--m2)';}
+  else{st.textContent='⏳ Heute noch nicht eingetragen';st.style.color='var(--acc)';}
+  const{tot,days,otd}=calcOT();
+  const oe=document.getElementById('hOT');oe.textContent=hm(tot,true);oe.className='hbv '+(tot>0?'plus':tot<0?'minus':'neu');
+  document.getElementById('hOTsub').textContent=days+' Arbeitstage'+(otd?' · '+otd+' ÜST-Abbau':'');
+  const yr=today().slice(0,4);const ys=calcYr(yr,d);
+  const ve=document.getElementById('hVac');ve.textContent=ys.vacLeft;ve.className='hbv '+(ys.vacLeft>5?'vac':ys.vacLeft>0?'acc':'minus');
+  document.getElementById('hVacSub').textContent=ys.vac+'/'+ys.vacTotal+' Tage genutzt';
+  const mon=monDate();const wh=[];
+  for(let i=0;i<5;i++){
+    const ds=addD(mon,i);const de=d[ds];const isT=ds===t;
+    const lbl=parseD(ds).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'});
+    let st2='<span style="color:var(--mu)">—</span>';
+    if(de){if(de.type==='work'){const diff=de.totalMins-getSoll();st2='<span style="font-family:\'JetBrains Mono\',monospace">'+hm(de.totalMins)+'</span> <span style="color:'+(diff>=0?'var(--grn)':'var(--red)')+'">'+hm(diff,true)+'</span>';}
+    else st2='<span style="color:'+TCOL[de.type]+'">'+TICON[de.type]+' '+(TLBL[de.type]||de.type)+'</span>';}
+    wh.push('<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--brd)'+(isT?';background:rgba(255,209,102,0.04);margin:0 -13px;padding:5px 13px':'')+'"><span style="font-family:\'JetBrains Mono\',monospace;font-size:0.65rem;color:'+(isT?'var(--acc)':'var(--m2)')+';font-weight:'+(isT?700:400)+'">'+lbl+(isT?' ◀':'')+'</span><span style="font-family:\'JetBrains Mono\',monospace;font-size:0.68rem;font-weight:600">'+st2+'</span></div>');
+  }
+  document.getElementById('hWeek').innerHTML=wh.join('');
+  const notes=Object.entries(d).filter(([,e])=>e&&e.notiz).sort(([a],[b])=>b.localeCompare(a)).slice(0,3);
+  if(notes.length){document.getElementById('hNoteCard').style.display='block';document.getElementById('hNotes').innerHTML=notes.map(([ds,en])=>'<div style="padding:5px 0;border-bottom:1px solid var(--brd)"><div style="font-family:\'JetBrains Mono\',monospace;font-size:0.58rem;color:var(--m2);margin-bottom:2px">'+parseD(ds).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})+'</div><div style="font-size:0.83rem">'+en.notiz+'</div></div>').join('');}
+  else document.getElementById('hNoteCard').style.display='none';
+}
+function saveToday(){
+  if(!aEmp){toast('Mitarbeiter auswählen!',true);return;}
+  const s=document.getElementById('h-s').value,e=document.getElementById('h-e').value;
+  const b=parseInt(document.getElementById('h-b').value)||0,n=document.getElementById('h-n').value.trim();
+  const[sh,sm]=s.split(':').map(Number),[eh,em]=e.split(':').map(Number);
+  let tot=(eh*60+em)-(sh*60+sm)-b;if(tot<0)tot+=1440;
+  const d=ldData();d[today()]={type:'work',start:s,end:e,brk:b,totalMins:tot};
+  if(n)d[today()].notiz=n;
+  svData(d);toast('✓ Heute gespeichert!');renderHome();updBanners();
+}
+
+// ===== TYPE SELECTOR =====
+function setT(t){
+  curType=t;
+  document.querySelectorAll('.tb').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  document.getElementById('workForm').style.display=t==='work'?'block':'none';
+  document.getElementById('specForm').style.display=t!=='work'?'block':'none';
+  const soll=getSoll();
+  const notes={vacation:'🌴 Von '+getVac()+' Jahrestagen abgezogen',sick:'🤒 Separat gezählt',holiday:'🎉 Kein Urlaubsabzug',overtime:'⚡ '+hm(soll)+' vom Überstunden-Konto abgezogen'};
+  document.getElementById('specNote').textContent=notes[t]||'';
+}
+function setTodayDate(){document.getElementById('eDate').value=today();loadDayRes();}
+
+// ===== SAVE ENTRY =====
+function saveEntry(){
+  if(!aEmp){toast('Mitarbeiter auswählen!',true);return;}
+  const date=document.getElementById('eDate').value;
+  if(!date){toast('Datum auswählen!',true);return;}
+  const notiz=document.getElementById('eNote').value.trim();
+  const d=ldData();
+  if(curType==='work'){
+    const s=document.getElementById('eStart').value,e=document.getElementById('eEnd').value;
+    const b=parseInt(document.getElementById('eBrk').value)||0;
+    if(!s||!e){toast('Zeiten eintragen!',true);return;}
+    const[sh,sm]=s.split(':').map(Number),[eh,em]=e.split(':').map(Number);
+    let tot=(eh*60+em)-(sh*60+sm)-b;if(tot<0)tot+=1440;
+    d[date]={type:'work',start:s,end:e,brk:b,totalMins:tot};
+    if(notiz)d[date].notiz=notiz;
+    svData(d);toast('✓ Gespeichert');loadDayRes();updBanners();
+  }else{
+    const days=parseInt(document.getElementById('specDays').value)||1;
+    for(let i=0;i<days;i++){d[addD(date,i)]={type:curType};if(notiz&&i===0)d[addD(date,i)].notiz=notiz;}
+    svData(d);toast('✓ '+days+' Tag(e) gespeichert');document.getElementById('dayResCard').style.display='none';updBanners();
+  }
+}
+
+// ===== LOAD DAY =====
+function loadDayRes(){
+  const date=document.getElementById('eDate').value;if(!date||!aEmp)return;
+  const e=ldData()[date];document.getElementById('eNote').value=e&&e.notiz?e.notiz:'';
+  const card=document.getElementById('dayResCard'),nc=document.getElementById('noteCard');
+  if(!e||e.type!=='work'){card.style.display='none';}
+  else{
+    const soll=getSoll();const diff=e.totalMins-soll;card.style.display='block';
+    document.getElementById('dayResBody').innerHTML='<div class="rr"><span class="rl">Beginn</span><span class="rv">'+e.start+'</span></div><div class="rr"><span class="rl">Feierabend</span><span class="rv">'+e.end+'</span></div><div class="rr"><span class="rl">Pause</span><span class="rv">'+e.brk+' Min</span></div><div class="rr"><span class="rl">Gesamt</span><span class="rv big">'+hm(e.totalMins)+'</span></div><div class="rr"><span class="rl">Über/Minus (Soll '+hm(soll)+')</span><span class="rv big '+cl(diff)+'">'+hm(diff,true)+'</span></div><div class="prog"><div class="prog-b" style="width:'+Math.min(100,(e.totalMins/soll)*100).toFixed(1)+'%;background:'+(diff>=0?'var(--grn)':'var(--red)')+'"></div></div>';
+  }
+  if(e&&e.notiz){nc.style.display='block';document.getElementById('noteBody').innerHTML='<div style="font-size:0.85rem;line-height:1.5;padding:3px 0">'+e.notiz+'</div><div style="display:flex;gap:6px;margin-top:7px"><button class="delbtn" onclick="delNote(\''+date+'\')">Notiz löschen</button></div>';}
+  else nc.style.display='none';
+}
+function delNote(ds){const d=ldData();if(d[ds]){delete d[ds].notiz;svData(d);}document.getElementById('noteCard').style.display='none';document.getElementById('eNote').value='';toast('✓ Notiz gelöscht');}
+
+// ===== BANNERS =====
+function calcOT(){
+  const d=ldData();const s=ldSet();const soll=getSoll();
+  let tot=s.otMins||0,days=0,otd=0;
+  for(const[ds,e]of Object.entries(d)){
+    if(!isWD(ds))continue;
+    if(e.type==='work'){tot+=((e.totalMins||0)-soll);days++;}
+    else if(e.type==='overtime'){tot-=soll;otd++;days++;}
+    else if(e.type==='vacation'||e.type==='sick'||e.type==='holiday'){days++;}
+  }
+  return{tot,days,otd};
+}
+function calcWkOT(mon){
+  const d=ldData();const soll=getSoll();let wm=0,wd=0;
+  for(let i=0;i<5;i++){
+    const ds=addD(mon,i);const e=d[ds];if(!e)continue;
+    if(e.type==='work'){wm+=e.totalMins;wd++;}
+    else if(e.type==='vacation'||e.type==='sick'||e.type==='holiday'||e.type==='overtime'){wm+=soll;wd++;}
+  }
+  return{wm,wd,diff:wm-(5*soll)};
+}
+function updBanners(){
+  if(!aEmp)return;
+  const{tot,days,otd}=calcOT();
+  const el=document.getElementById('totOT');el.textContent=hm(tot,true);el.className='bv '+(tot>0?'plus':tot<0?'minus':'neu');
+  document.getElementById('totOTsub').textContent=days+' Tage'+(otd?' · '+otd+' ÜST-Abbau':'');
+  const wk=calcWkOT(monDate());
+  const we=document.getElementById('wkOT');we.textContent=hm(wk.diff,true);we.style.color=wk.diff>0?'var(--grn)':wk.diff<0?'var(--red)':'var(--m2)';
+  document.getElementById('wkDays').textContent=wk.wd+'/5 Tage';
+}
+
+// ===== WEEK =====
+function monDate(){const m=monOf(today());const d=parseD(m);d.setDate(d.getDate()+wkOff*7);return fmt(d);}
+function shiftWk(dir){wkOff+=dir;renderWk();updWkSum();}
+function updWkSum(){
+  const mon=monDate();const wk=calcWkOT(mon);const soll=getSoll();
+  const de=document.getElementById('wksDiff');de.textContent=hm(wk.diff,true);de.className='wsd '+cl(wk.diff);
+  document.getElementById('wksW').textContent=hm(wk.wm);document.getElementById('wksS').textContent=hm(5*soll);document.getElementById('wksD').textContent=wk.wd+'/5';
+}
+function renderWk(){
+  const mon=monDate();const d=ldData();const soll=getSoll();const t=today();
+  const fri=addD(mon,4);
+  document.getElementById('wkLabel').textContent=parseD(mon).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+' – '+parseD(fri).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const cont=document.getElementById('wkOverview');cont.innerHTML='';
+  for(let i=0;i<7;i++){
+    const ds=addD(mon,i);const isWE=i>=5;const e=d[ds];const isT=ds===t;
+    const lbl=parseD(ds).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'});
+    const row=document.createElement('div');
+    let cls='day-row';
+    if(isWE)cls+=' we';
+    else if(e)cls+=' has';
+    else if(ds<t)cls+=' miss';
+    if(isT)cls+=' today-row';
+    row.className=cls;
+    // Left icon
+    let iconBg='var(--sf)',iconBrd='var(--b2)',iconTxt=isWE?'🏖':'➕';
+    if(e){iconBg=TCOL[e.type];iconBrd=TCOL[e.type];iconTxt=TICON[e.type]||'✓';}
+    // Right content
+    let rightHtml='';
+    if(isWE){rightHtml='<span style="font-family:\'JetBrains Mono\',monospace;font-size:0.62rem;color:var(--mu)">Wochenende</span>';}
+    else if(e){
+      if(e.type==='work'){const diff=e.totalMins-soll;rightHtml='<div style="text-align:right"><div style="font-family:\'Bebas Neue\',sans-serif;font-size:1rem;letter-spacing:1px">'+hm(e.totalMins)+'</div><div style="font-family:\'JetBrains Mono\',monospace;font-size:0.62rem;color:'+(diff>=0?'var(--grn)':'var(--red)')+'">'+hm(diff,true)+'</div></div>';}
+      else{rightHtml='<span style="font-family:\'JetBrains Mono\',monospace;font-size:0.68rem;font-weight:700;color:'+TCOL[e.type]+'">'+TLBL[e.type]+'</span>';}
+    }else{rightHtml='<span style="font-family:\'JetBrains Mono\',monospace;font-size:0.62rem;color:'+(ds<=t?'var(--red)':'var(--mu)')+';">'+(ds<=t?'⚠️ Fehlt':'—')+'</span>';}
+    row.innerHTML='<div class="dr-left"><div class="dr-icon" style="background:'+iconBg+';border-color:'+iconBrd+'">'+iconTxt+'</div><div><div class="dr-name'+(isT?' today-name':'')+'">'+lbl+(isT?' ◀':'')+'</div>'+(e&&e.type==='work'?'<div class="dr-sub">'+e.start+' – '+e.end+' · '+e.brk+'min</div>':'')+'</div></div>'+rightHtml;
+    if(!isWE)row.onclick=()=>openDayPopup(ds);
+    cont.appendChild(row);
+  }
+  updWkSum();
+}
+
+// ===== DAY POPUP =====
+let popupSelectedType = '';
+
+function openDayPopup(ds){
+  popupDs=ds;const d=ldData();const e=d[ds];
+  document.getElementById('popup-title').textContent=parseD(ds).toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long'});
+  const curT=e?e.type:'';
+  popupSelectedType = curT;
+  let tbHtml='';
+  for(const tp of ['work','vacation','overtime','sick','holiday']){
+    const on=curT===tp;
+    tbHtml+='<button onclick="popupSelectType(\''+tp+'\')" id="pbt-'+tp+'" style="flex:1;min-width:78px;border:2px solid '+(on?TCOL[tp]:'var(--b2)')+';background:'+(on?'rgba('+{work:'255,209,102',vacation:'6,214,160',overtime:'17,138,178',sick:'239,71,111',holiday:'155,114,207'}[tp]+',0.15)':'var(--sf)')+';color:'+(on?TCOL[tp]:'var(--m2)')+';font-family:\'JetBrains Mono\',monospace;font-size:0.58rem;font-weight:700;text-transform:uppercase;padding:9px 5px;border-radius:8px;cursor:pointer;transition:all 0.15s">'+TLBL[tp]+'</button>';
+  }
+  document.getElementById('popup-types').innerHTML=tbHtml;
+  document.getElementById('popup-work').style.display=(!curT||curT==='work')?'block':'none';
+  document.getElementById('popup-ps').value=e&&e.type==='work'?e.start:'08:00';
+  document.getElementById('popup-pe').value=e&&e.type==='work'?e.end:'16:30';
+  document.getElementById('popup-pb').value=e&&e.type==='work'?(e.brk||0):30;
+  document.getElementById('popup-del').style.display=e?'block':'none';
+  document.getElementById('dayPopup').classList.add('open');
+}
+
+function popupSelectType(tp){
+  popupSelectedType = tp;
+  const rgba={work:'255,209,102',vacation:'6,214,160',overtime:'17,138,178',sick:'239,71,111',holiday:'155,114,207'};
+  for(const t of ['work','vacation','overtime','sick','holiday']){
+    const btn=document.getElementById('pbt-'+t);if(!btn)continue;
+    const on=t===tp;
+    btn.style.borderColor=on?TCOL[t]:'var(--b2)';
+    btn.style.background=on?('rgba('+rgba[t]+',0.15)'):'var(--sf)';
+    btn.style.color=on?TCOL[t]:'var(--m2)';
+  }
+  document.getElementById('popup-work').style.display=tp==='work'?'block':'none';
+}
+
+function popupSave(){
+  if(!popupSelectedType){toast('Bitte Art auswählen!',true);return;}
+  const d=ldData();
+  if(popupSelectedType==='work'){
+    const s=document.getElementById('popup-ps').value,e=document.getElementById('popup-pe').value;
+    const b=parseInt(document.getElementById('popup-pb').value)||0;
+    if(!s||!e){toast('Zeiten eintragen!',true);return;}
+    const[sh,sm]=s.split(':').map(Number),[eh,em]=e.split(':').map(Number);
+    let tot=(eh*60+em)-(sh*60+sm)-b;if(tot<0)tot+=1440;
+    d[popupDs]={type:'work',start:s,end:e,brk:b,totalMins:tot};
+  }else{d[popupDs]={type:popupSelectedType};}
+  svData(d);closeDayPopup();
+  toast('✓ '+parseD(popupDs).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})+' gespeichert');
+  renderWk();updBanners();if(document.getElementById('pg-home').classList.contains('on'))renderHome();
+}
+function popupDelete(){if(!confirm('Eintrag löschen?'))return;const d=ldData();delete d[popupDs];svData(d);closeDayPopup();toast('✓ Gelöscht');renderWk();updBanners();}
+function closeDayPopup(){document.getElementById('dayPopup').classList.remove('open');}
+function saveAllWk(){
+  const mon=monDate();const d=ldData();
+  const s=document.getElementById('wa-s').value,e=document.getElementById('wa-e').value;
+  const b=parseInt(document.getElementById('wa-b').value)||0;
+  if(!s||!e){toast('Zeiten eintragen!',true);return;}
+  const[sh,sm]=s.split(':').map(Number),[eh,em]=e.split(':').map(Number);
+  let tot=(eh*60+em)-(sh*60+sm)-b;if(tot<0)tot+=1440;
+  let added=0,skipped=0;
+  for(let i=0;i<5;i++){const ds=addD(mon,i);if(d[ds]){skipped++;continue;}d[ds]={type:'work',start:s,end:e,brk:b,totalMins:tot};added++;}
+  svData(d);toast('✓ '+added+' Tage eingetragen'+(skipped?' ('+skipped+' bereits vorhanden)':''));renderWk();updBanners();
+}
+
+// ===== YEAR SELECTS =====
+function getYrs(){const d=ldData();const s=new Set(Object.keys(d).map(k=>k.slice(0,4)));s.add(today().slice(0,4));return[...s].sort().reverse();}
+function buildYrSels(){
+  const yrs=getYrs();
+  ['statsYr','vJahr','tx-yr'].forEach(id=>{const sel=document.getElementById(id);if(!sel)return;const cur=sel.value;sel.innerHTML=yrs.map(y=>'<option value="'+y+'"'+(y===cur?' selected':'')+'>'+y+'</option>').join('');if(!cur||!yrs.includes(cur))sel.value=yrs[0];});
+}
+
+// ===== CALC YEAR =====
+function calcYr(yr,data){
+  const s=ldSet();const soll=getSoll();const vacT=getVac()+(s.vacCarry||0);
+  let wd=0,wm=0,vac=0,sick=0,otAbb=0;const bm={};
+  for(const[ds,e]of Object.entries(data)){
+    if(ds.slice(0,4)!==yr||!isWD(ds))continue;
+    const m=ds.slice(0,7);if(!bm[m])bm[m]={wm:0,wd:0,vac:0,sick:0};
+    if(e.type==='work'){wd++;wm+=e.totalMins;bm[m].wm+=e.totalMins;bm[m].wd++;}
+    else if(e.type==='overtime'){wd++;wm+=soll;bm[m].wm+=soll;bm[m].wd++;otAbb++;}
+    else if(e.type==='vacation'){wd++;wm+=soll;bm[m].wm+=soll;bm[m].wd++;vac++;bm[m].vac++;}
+    else if(e.type==='sick'){wd++;wm+=soll;bm[m].wm+=soll;bm[m].wd++;sick++;bm[m].sick++;}
+    else if(e.type==='holiday'){wd++;wm+=soll;bm[m].wm+=soll;bm[m].wd++;}
+  }
+  return{wd,wm,diff:wm-wd*soll,vac,vacLeft:vacT-vac,vacTotal:vacT,sick,otAbb,bm,soll};
+}
+
+// ===== STATS =====
+function renderStats(){
+  buildYrSels();const yr=document.getElementById('statsYr').value;const s=calcYr(yr,ldData());
+  document.getElementById('statBoxes').innerHTML='<div class="sb"><div class="sbv acc">'+hm(s.wm)+'</div><div class="sbk">Gearbeitete Std.</div></div><div class="sb"><div class="sbv '+cl(s.diff)+'">'+hm(s.diff,true)+'</div><div class="sbk">Über/Minus '+yr+'</div></div><div class="sb"><div class="sbv vac">'+s.vac+'/'+s.vacTotal+'</div><div class="sbk">Urlaub genommen</div></div><div class="sb"><div class="sbv '+(s.vacLeft>=0?'vac':'minus')+'">'+s.vacLeft+'</div><div class="sbk">Resturlaub</div></div><div class="sb"><div class="sbv" style="color:var(--red)">'+s.sick+'</div><div class="sbk">Krankheitstage</div></div><div class="sb"><div class="sbv" style="color:var(--blu)">'+s.otAbb+'</div><div class="sbk">ÜST-Abbau</div></div>';
+  const months=Object.keys(s.bm).sort();
+  let html=months.length===0?'<div class="empty">Noch keine Daten</div>':'<table class="t"><thead><tr><th>Monat</th><th>Tage</th><th>Std.</th><th>+/−</th><th>🌴</th><th>🤒</th></tr></thead><tbody>';
+  for(const m of months){const md=s.bm[m];const diff=md.wm-md.wd*s.soll;html+='<tr><td>'+MN[parseInt(m.slice(5))-1]+'</td><td>'+md.wd+'</td><td>'+hm(md.wm)+'</td><td class="'+cl(diff)+'">'+hm(diff,true)+'</td><td>'+(md.vac||0)+'</td><td>'+(md.sick||0)+'</td></tr>';}
+  if(months.length)html+='</tbody></table>';
+  document.getElementById('statDetail').innerHTML='<div class="card"><div class="chd"><div class="dot" style="background:var(--blu)"></div>Monatsübersicht '+yr+'</div>'+html+'</div>';
+}
+
+// ===== VERLAUF =====
+function renderVerlauf(){
+  buildYrSels();const yr=document.getElementById('vJahr').value;const mon=document.getElementById('vMon').value;
+  const data=ldData();const soll=getSoll();
+  const keys=Object.keys(data).filter(k=>k.slice(0,4)===yr&&(!mon||k.slice(5,7)===mon)).sort().reverse();
+  const cont=document.getElementById('verlaufContent');
+  if(!keys.length){cont.innerHTML='<div class="empty">Keine Einträge</div>';return;}
+  const TC={work:'tw',vacation:'tv',sick:'ts',holiday:'th',overtime:'to'};
+  let html='<table class="t"><thead><tr><th>Datum</th><th>Art</th><th>Beginn</th><th>Ende</th><th>Std.</th><th>+/−</th><th></th></tr></thead><tbody>';
+  for(const k of keys){
+    const e=data[k];const dl=parseD(k).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'});
+    const tl=TLBL[e.type]||e.type;const tc=TC[e.type]||'';
+    if(e.type==='work'){const diff=e.totalMins-soll;html+='<tr><td>'+dl+'</td><td><span class="tag '+tc+'">'+tl+'</span>'+(e.notiz?'💬':'')+'</td><td>'+e.start+'</td><td>'+e.end+'</td><td>'+hm(e.totalMins)+'</td><td class="'+cl(diff)+'">'+hm(diff,true)+'</td><td><button class="delbtn" onclick="delEntry(\''+k+'\')">✕</button></td></tr>';if(e.notiz)html+='<tr><td colspan="7" style="color:var(--m2);font-size:0.58rem;font-style:italic;padding:3px 4px 6px">💬 '+e.notiz+'</td></tr>';}
+    else{html+='<tr><td>'+dl+'</td><td><span class="tag '+tc+'">'+tl+(e.name?' — '+e.name:'')+'</span></td><td colspan="3" style="color:var(--mu)">—</td><td>—</td><td><button class="delbtn" onclick="delEntry(\''+k+'\')">✕</button></td></tr>';}
+  }
+  cont.innerHTML=html+'</tbody></table>';
+}
+function delEntry(ds){if(!confirm('Löschen?\n'+ds))return;const d=ldData();delete d[ds];svData(d);toast('✓ Gelöscht');renderVerlauf();loadDayRes();updBanners();}
+
+// ===== SUMME =====
+function kwNum(mon){const d=parseD(mon);d.setHours(0,0,0,0);d.setDate(d.getDate()+3-(d.getDay()+6)%7);const w1=new Date(d.getFullYear(),0,4);return 'KW '+Math.round(((d-w1)/86400000+1+(w1.getDay()+6)%7)/7)+'/'+d.getFullYear();}
+function getMondays(){const d=ldData();const s=new Set();for(const ds of Object.keys(d))if(isWD(ds))s.add(monOf(ds));return[...s].sort().reverse();}
+function getMonths(){const d=ldData();const s=new Set();for(const ds of Object.keys(d))if(isWD(ds))s.add(ds.slice(0,7));return[...s].sort().reverse();}
+function mkDelBtn(list,row){const b=document.createElement('button');b.textContent='✕';b.className='delbtn';b.onclick=()=>list.removeChild(row);return b;}
+function initSumme(){if(!document.getElementById('kwList').children.length)addKW();if(!document.getElementById('moList').children.length)addMo();}
+function addKW(){
+  const mons=getMondays();const list=document.getElementById('kwList');
+  const row=document.createElement('div');row.style.cssText='display:flex;gap:5px;align-items:center;';
+  const sel=document.createElement('select');sel.style.flex='1';
+  sel.innerHTML=mons.length?mons.map(m=>'<option value="'+m+'">'+kwNum(m)+' ('+parseD(m).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+'–'+parseD(addD(m,4)).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+')</option>').join(''):'<option>Keine Daten</option>';
+  row.appendChild(sel);row.appendChild(mkDelBtn(list,row));list.appendChild(row);
+}
+function clearKW(){document.getElementById('kwList').innerHTML='';document.getElementById('kwRes').style.display='none';addKW();}
+function calcKW(){
+  const d=ldData();const soll=getSoll();const sels=document.getElementById('kwList').querySelectorAll('select');
+  const mons=[...sels].map(s=>s.value).filter(Boolean);if(!mons.length){toast('Keine KW ausgewählt',true);return;}
+  let wm=0,wd=0;const seen=new Set();
+  for(const m of mons){if(seen.has(m))continue;seen.add(m);for(let i=0;i<5;i++){const ds=addD(m,i);const e=d[ds];if(e&&e.type==='work'){wm+=e.totalMins;wd++;}}}
+  const s=seen.size*5*soll,diff=wm-s;
+  document.getElementById('kwRes').style.display='block';document.getElementById('kw-c').textContent=seen.size+' KWs';document.getElementById('kw-w').textContent=hm(wm);document.getElementById('kw-s').textContent=hm(s);
+  const de=document.getElementById('kw-d');de.textContent=hm(diff,true);de.className='rv big '+cl(diff);
+}
+function addMo(){
+  const months=getMonths();const list=document.getElementById('moList');
+  const row=document.createElement('div');row.style.cssText='display:flex;gap:5px;align-items:center;';
+  const sel=document.createElement('select');sel.style.flex='1';
+  sel.innerHTML=months.length?months.map(m=>'<option value="'+m+'">'+MN[parseInt(m.slice(5))-1]+' '+m.slice(0,4)+'</option>').join(''):'<option>Keine Daten</option>';
+  row.appendChild(sel);row.appendChild(mkDelBtn(list,row));list.appendChild(row);
+}
+function clearMo(){document.getElementById('moList').innerHTML='';document.getElementById('moRes').style.display='none';addMo();}
+function calcMo(){
+  const d=ldData();const soll=getSoll();const sels=document.getElementById('moList').querySelectorAll('select');
+  const months=[...sels].map(s=>s.value).filter(Boolean);if(!months.length){toast('Keinen Monat ausgewählt',true);return;}
+  let wm=0,wd=0,vac=0,sick=0;const seen=new Set();
+  for(const m of months){if(seen.has(m))continue;seen.add(m);for(const[ds,e]of Object.entries(d)){if(ds.slice(0,7)!==m||!isWD(ds))continue;if(e.type==='work'){wm+=e.totalMins;wd++;}else if(e.type==='vacation')vac++;else if(e.type==='sick')sick++;}}
+  const s=wd*soll,diff=wm-s;
+  document.getElementById('moRes').style.display='block';document.getElementById('mo-c').textContent=seen.size+' Monate';document.getElementById('mo-w').textContent=hm(wm);document.getElementById('mo-s').textContent=hm(s);
+  const de=document.getElementById('mo-d');de.textContent=hm(diff,true);de.className='rv big '+cl(diff);
+  document.getElementById('mo-v').textContent=vac+' Tage';document.getElementById('mo-k').textContent=sick+' Tage';
+}
+
+// ===== STEUER =====
+const SK='ztpro_steuer';
+const OSTBL=['BB','MV','SN','ST','TH'];
+
+function saveSteuerData(){
+  const d={
+    br:document.getElementById('tx-br').value,
+    sk:document.getElementById('tx-sk').value,
+    bl:document.getElementById('tx-bl').value,
+    ki:document.getElementById('tx-ki').value,
+    al:document.getElementById('tx-al').value,
+    ki2:document.getElementById('tx-ki2').value,
+    km:document.getElementById('wk-km').value,
+    ho:document.getElementById('wk-ho').value,
+    am:document.getElementById('wk-am').value,
+    fb:document.getElementById('wk-fb').value,
+    gw:document.getElementById('wk-gw').value,
+  };
+  localStorage.setItem(SK,JSON.stringify(d));
+}
+
+function loadSteuerData(){
+  try{
+    const d=JSON.parse(localStorage.getItem(SK)||'{}');
+    if(d.br)document.getElementById('tx-br').value=d.br;
+    if(d.sk)document.getElementById('tx-sk').value=d.sk;
+    if(d.bl)document.getElementById('tx-bl').value=d.bl;
+    if(d.ki)document.getElementById('tx-ki').value=d.ki;
+    if(d.al)document.getElementById('tx-al').value=d.al;
+    if(d.ki2)document.getElementById('tx-ki2').value=d.ki2;
+    if(d.km)document.getElementById('wk-km').value=d.km;
+    if(d.ho)document.getElementById('wk-ho').value=d.ho;
+    if(d.am)document.getElementById('wk-am').value=d.am;
+    if(d.fb)document.getElementById('wk-fb').value=d.fb;
+    if(d.gw)document.getElementById('wk-gw').value=d.gw;
+  }catch{}
+}
+
+function updKirche(){
+  const bl=document.getElementById('tx-bl').value;
+  const ki=document.getElementById('tx-ki');
+  const cur=ki.value;
+  ki.innerHTML='<option value="0">Nein</option><option value="'+(['BY','BW'].includes(bl)?'0.08':'0.09')+'">Ja '+((['BY','BW'].includes(bl))?'8':'9')+'%</option>';
+  ki.value=cur==='0'?'0':(['BY','BW'].includes(bl)?'0.08':'0.09');
+}
+
+function calcLST(br12,skl,kind){
+  const zvE=br12-1230;let fb=11784;
+  if(skl===3)fb=23568;if(skl===2)fb=11784+4260;
+  const tx=Math.max(0,zvE-fb-kind*9312);let tax=0;
+  if(tx<=0)tax=0;
+  else if(tx<=17005){const y=(tx-11784)/1e4;tax=(979.18*y+1400)*y;}
+  else if(tx<=66760){const z=(tx-17005)/1e4;tax=(192.59*z+2397)*z+966.53;}
+  else if(tx<=277825)tax=0.42*tx-10602.13;
+  else tax=0.45*tx-18936.88;
+  if(skl===5)tax*=1.25;if(skl===6)tax*=1.4;
+  return Math.max(0,tax/12);
+}
+
+function calcAlles(){
+  const br=parseFloat(document.getElementById('tx-br').value)||0;
+  if(br<=0){toast('Bitte Bruttogehalt eingeben!',true);return;}
+  saveSteuerData();
+
+  const skl=parseInt(document.getElementById('tx-sk').value);
+  const bl=document.getElementById('tx-bl').value;
+  const ki=parseFloat(document.getElementById('tx-ki').value);
+  const al=parseInt(document.getElementById('tx-al').value)||30;
+  const kind=parseFloat(document.getElementById('tx-ki2').value)||0;
+
+  // Netto berechnen
+  const kv=Math.min(br,5512.5)*0.073;
+  const pvR=al>=23?(kind===0?0.02375:0.01875):0.01875;
+  const pv=Math.min(br,5512.5)*pvR;
+  const rv=Math.min(br,7450)*0.093;
+  const av=Math.min(br,7450)*0.013;
+  const lst=calcLST(br*12,skl,kind);
+  const soli=lst>119.07?lst*0.055:0;
+  const kiSt=ki>0?lst*ki:0;
+  const soz=kv+pv+rv+av;
+  const net=br-(lst+soli+kiSt+soz);
+
+  // Werbungskosten
+  const km=parseFloat(document.getElementById('wk-km').value)||0;
+  const ho=parseFloat(document.getElementById('wk-ho').value)||0;
+  const am=parseFloat(document.getElementById('wk-am').value)||0;
+  const fb=parseFloat(document.getElementById('wk-fb').value)||0;
+  const gw=parseFloat(document.getElementById('wk-gw').value)||0;
+
+  // Arbeitstage aus Verlauf
+  const yr=document.getElementById('tx-yr').value||today().slice(0,4);
+  const data=ldData();let wd=0;
+  for(const[ds,e]of Object.entries(data)){if(ds.slice(0,4)===yr&&e.type==='work'&&isWD(ds))wd++;}
+  if(!wd)wd=220; // Schätzung falls keine Daten
+
+  const fahr=km*0.3*wd;
+  const hoP=Math.min(ho*6,1260);
+  const wkGes=fahr+hoP+am+fb+gw;
+  const wkUeb=Math.max(0,wkGes-1230);
+
+  // Steuerersparnis aus Ausgaben & Zahlungen
+  const aus=ldAU().filter(a=>a.dat.slice(0,4)===yr);
+  const zah=ldUW().z.filter(z=>z.dat.slice(0,4)===yr);
+  let wb=0,saA=0,abA=0,hwA=0;
+  for(const a of aus){
+    if(['steuerberater','fortbildung','computer'].includes(a.kat))wb+=a.bet;
+    else if(['versicherung','spende'].includes(a.kat))saA+=a.bet;
+    else if(['arzt','behoerde','brille','sonstiges'].includes(a.kat))abA+=a.bet;
+    else if(a.kat==='handwerker')hwA+=a.bet;
+  }
+  const eltern=Math.min(zah.reduce((s,z)=>s+z.bet,0),10908);
+  abA+=eltern;
+  const hwErs=Math.min(hwA*0.2,1200);
+  const gz=br*12>60000?0.42:br*12>30000?0.3:br*12>15000?0.24:0.14;
+  const ers=(wkUeb+Math.max(0,saA-36)+Math.max(0,abA-(br*12)*0.04))*gz+hwErs;
+
+  // Anzeigen
+  document.getElementById('steuerRes').style.display='block';
+  document.getElementById('r-br').textContent=eur(br)+' ('+BLN[bl]+')';
+  document.getElementById('r-lst').textContent='− '+eur(lst);
+  document.getElementById('r-sol').textContent='− '+eur(soli+kiSt);
+  document.getElementById('r-soz').textContent='− '+eur(soz);
+  document.getElementById('r-net').textContent=eur(net);
+  document.getElementById('r-netj').textContent=eur(net*12);
+  document.getElementById('wk-rf').textContent=eur(fahr)+' ('+wd+' Tage × '+km+'km)';
+  document.getElementById('wk-rh').textContent=eur(hoP);
+  document.getElementById('wk-ra').textContent=eur(am+fb);
+  document.getElementById('wk-rg').textContent=eur(gw);
+  document.getElementById('wk-rges').textContent=eur(wkGes);
+  const rub=document.getElementById('wk-rub');
+  rub.textContent=wkUeb>0?'+'+eur(wkUeb)+' ✅':'Unter Pauschbetrag';
+  rub.style.color=wkUeb>0?'var(--grn)':'var(--mu)';
+  document.getElementById('r-wd').textContent=wd+' Tage'+(wd===220?' (Schätzung)':'');
+  document.getElementById('r-eltern').textContent=eur(eltern);
+  document.getElementById('r-ab').textContent=eur(abA);
+  document.getElementById('r-hw').textContent=eur(hwErs);
+  document.getElementById('r-ers').textContent=eur(ers);
+}
+
+function initSteuer(){
+  buildYrSels();
+  // Sync tx-yr with statsYr
+  const yrs=getYrs();
+  const sel=document.getElementById('tx-yr');
+  if(sel){sel.innerHTML=yrs.map(y=>'<option value="'+y+'">'+y+'</option>').join('');sel.value=yrs[0]||today().slice(0,4);}
+  // Load saved data
+  loadSteuerData();
+  // Sync Bundesland from profile
+  const e=getEmp(aEmp);
+  if(e&&!localStorage.getItem(SK)){document.getElementById('tx-bl').value=e.bl;updKirche();}
+  // Auto-calculate if data exists
+  const saved=localStorage.getItem(SK);
+  if(saved){const d=JSON.parse(saved);if(d.br)calcAlles();}
+}
+
+// Keep old function names as aliases for backward compat
+function calcNetto(){calcAlles();}
+function calcWK(){calcAlles();}
+function calcFA(){calcAlles();}
+function calcAutoTax(){}
+
+// ===== ZAHLUNGEN =====
+function initUW(){document.getElementById('uw-dat').value=today();renderUWRecips();buildUWYrs();renderUW();}
+function renderUWRecips(){const d=ldUW();document.getElementById('uw-emp').innerHTML='<option value="">— wählen —</option>'+d.r.map(r=>'<option value="'+r+'">'+r+'</option>').join('');}
+function addRecip(){const n=document.getElementById('uw-new').value.trim();if(!n){toast('Name eingeben!',true);return;}const d=ldUW();if(!d.r.includes(n))d.r.push(n);svUW(d);document.getElementById('uw-new').value='';renderUWRecips();document.getElementById('uw-emp').value=n;toast('✓ '+n+' hinzugefügt');}
+function saveUW(){
+  const emp=document.getElementById('uw-emp').value,bet=parseFloat(document.getElementById('uw-bet').value)||0;
+  const dat=document.getElementById('uw-dat').value,not=document.getElementById('uw-not').value.trim();
+  if(!emp){toast('Empfänger wählen!',true);return;}if(bet<=0){toast('Betrag eingeben!',true);return;}if(!dat){toast('Datum eingeben!',true);return;}
+  const d=ldUW();d.z.push({id:'uw'+Date.now(),emp,bet,dat,not});svUW(d);
+  document.getElementById('uw-bet').value='';document.getElementById('uw-not').value='';toast('✓ Zahlung gespeichert');buildUWYrs();renderUW();
+}
+function buildUWYrs(){const d=ldUW();const yrs=new Set(d.z.map(z=>z.dat.slice(0,4)));yrs.add(today().slice(0,4));const sel=document.getElementById('uw-yr');const cur=sel.value;sel.innerHTML=[...yrs].sort().reverse().map(y=>'<option value="'+y+'"'+(y===cur?' selected':'')+'>'+y+'</option>').join('');if(!cur)sel.value=[...yrs].sort().reverse()[0];}
+function renderUW(){
+  const yr=document.getElementById('uw-yr').value;const d=ldUW();
+  const zs=d.z.filter(z=>z.dat.slice(0,4)===yr).sort((a,b)=>b.dat.localeCompare(a.dat));
+  const byE={};for(const z of zs){if(!byE[z.emp])byE[z.emp]=0;byE[z.emp]+=z.bet;}
+  const ges=Object.values(byE).reduce((a,b)=>a+b,0);const abs=Math.min(ges,10908);
+  let sh=Object.keys(byE).length===0?'<div class="empty">Keine Zahlungen für '+yr+'</div>':Object.entries(byE).map(([n,s])=>'<div class="rr"><span class="rl">'+n+'</span><span class="rv">'+eur(s)+'</span></div>').join('');
+  if(Object.keys(byE).length>0)sh+='<div class="rr" style="border-top:2px solid var(--acc);margin-top:4px;padding-top:6px"><span class="rl" style="color:var(--acc)">Gesamt '+yr+'</span><span class="rv big" style="color:var(--acc)">'+eur(ges)+'</span></div><div class="rr"><span class="rl">Steuerlich absetzbar</span><span class="rv '+(ges>=10908?'plus':'neu')+'">'+eur(abs)+'</span></div><div style="margin-top:6px;padding:6px;background:var(--sf);border-radius:6px;font-family:\'JetBrains Mono\',monospace;font-size:0.56rem;color:var(--m2)">💡 Als außergewöhnliche Belastung absetzbar (max. 10.908 €/Jahr)</div>';
+  document.getElementById('uwSum').innerHTML=sh;
+  if(!zs.length){document.getElementById('uwHist').innerHTML='<div class="empty">Keine Einträge</div>';return;}
+  let ht='<table class="t"><thead><tr><th>Datum</th><th>Empfänger</th><th>Betrag</th><th>Notiz</th><th></th></tr></thead><tbody>';
+  for(const z of zs){const dl=parseD(z.dat).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'2-digit'});ht+='<tr><td>'+dl+'</td><td>'+z.emp+'</td><td style="color:var(--acc);font-weight:700">'+eur(z.bet)+'</td><td style="color:var(--m2)">'+( z.not||'—')+'</td><td><button class="delbtn" onclick="delUW(\''+z.id+'\')">✕</button></td></tr>';}
+  document.getElementById('uwHist').innerHTML=ht+'</tbody></table>';
+}
+function delUW(id){if(!confirm('Löschen?'))return;const d=ldUW();d.z=d.z.filter(z=>z.id!==id);svUW(d);toast('✓ Gelöscht');renderUW();}
+
+// ===== AUSGABEN =====
+const KATS={behoerde:{l:'🏛️ Behörden',i:'Außergewöhnliche Belastung'},arzt:{l:'🏥 Arzt/Medikamente',i:'Außergewöhnliche Belastung'},handwerker:{l:'🔧 Handwerker',i:'20% direkt absetzbar (max. 1.200€)'},spende:{l:'❤️ Spenden',i:'Sonderausgaben'},versicherung:{l:'🛡️ Versicherungen',i:'Sonderausgaben'},steuerberater:{l:'📑 Steuerberater',i:'Werbungskosten'},fortbildung:{l:'🎓 Fortbildung',i:'Werbungskosten'},computer:{l:'💻 Arbeitsmittel',i:'Werbungskosten'},brille:{l:'👓 Brille',i:'Außergewöhnliche Belastung'},sonstiges:{l:'📎 Sonstiges',i:'Je nach Art'}};
+function initAU(){document.getElementById('au-dat').value=today();buildAUYrs();renderAU();}
+function buildAUYrs(){const d=ldAU();const yrs=new Set(d.map(a=>a.dat.slice(0,4)));yrs.add(today().slice(0,4));const sel=document.getElementById('au-yr');const cur=sel.value;sel.innerHTML=[...yrs].sort().reverse().map(y=>'<option value="'+y+'"'+(y===cur?' selected':'')+'>'+y+'</option>').join('');if(!cur)sel.value=[...yrs].sort().reverse()[0];}
+function saveAU(){
+  const kat=document.getElementById('au-kat').value,desc=document.getElementById('au-desc').value.trim();
+  const bet=parseFloat(document.getElementById('au-bet').value)||0,dat=document.getElementById('au-dat').value;
+  const bel=document.getElementById('au-bel').value;
+  if(!desc){toast('Beschreibung eingeben!',true);return;}if(bet<=0){toast('Betrag eingeben!',true);return;}if(!dat){toast('Datum eingeben!',true);return;}
+  const d=ldAU();d.push({id:'au'+Date.now(),kat,desc,bet,dat,bel});svAU(d);
+  document.getElementById('au-desc').value='';document.getElementById('au-bet').value='';toast('✓ Ausgabe gespeichert');buildAUYrs();renderAU();
+}
+function renderAU(){
+  const yr=document.getElementById('au-yr').value;const all=ldAU().filter(a=>a.dat.slice(0,4)===yr).sort((a,b)=>b.dat.localeCompare(a.dat));
+  const byK={};for(const a of all){if(!byK[a.kat])byK[a.kat]=0;byK[a.kat]+=a.bet;}
+  const ges=Object.values(byK).reduce((a,b)=>a+b,0);
+  let sh=!all.length?'<div class="empty">Keine Ausgaben für '+yr+'</div>':Object.entries(byK).map(([k,s])=>{const kd=KATS[k]||{l:k,i:''};return'<div class="rr"><div><div class="rl">'+kd.l+'</div><div style="font-family:\'JetBrains Mono\',monospace;font-size:0.5rem;color:var(--mu)">'+kd.i+'</div></div><span class="rv">'+eur(s)+'</span></div>';}).join('');
+  if(all.length)sh+='<div class="rr" style="border-top:2px solid var(--acc);margin-top:4px;padding-top:6px"><span class="rl" style="color:var(--acc)">Gesamt '+yr+'</span><span class="rv big" style="color:var(--acc)">'+eur(ges)+'</span></div><div style="margin-top:6px;padding:6px;background:var(--sf);border-radius:6px;font-family:\'JetBrains Mono\',monospace;font-size:0.56rem;color:var(--m2)">💡 Alle Belege aufbewahren! Finanzamt kann bis zu 10 Jahre Nachweise verlangen.</div>';
+  document.getElementById('auSum').innerHTML=sh;
+  if(!all.length){document.getElementById('auHist').innerHTML='<div class="empty">Keine Einträge</div>';return;}
+  let ht='<table class="t"><thead><tr><th>Datum</th><th>Kategorie</th><th>Beschr.</th><th>Betrag</th><th>Beleg</th><th></th></tr></thead><tbody>';
+  for(const a of all){const dl=parseD(a.dat).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'2-digit'});const kl=(KATS[a.kat]||{l:a.kat}).l;const bi={ja:'✅',digital:'📱',nein:'❌'}[a.bel]||'—';ht+='<tr><td>'+dl+'</td><td style="white-space:normal;max-width:70px;font-size:0.6rem">'+kl+'</td><td style="white-space:normal;max-width:80px;color:var(--m2)">'+a.desc+'</td><td style="color:var(--acc);font-weight:700">'+eur(a.bet)+'</td><td>'+bi+'</td><td><button class="delbtn" onclick="delAU(\''+a.id+'\')">✕</button></td></tr>';}
+  document.getElementById('auHist').innerHTML=ht+'</tbody></table>';
+}
+function delAU(id){if(!confirm('Löschen?'))return;svAU(ldAU().filter(a=>a.id!==id));toast('✓ Gelöscht');renderAU();}
+
+// ===== SETTINGS =====
+function ldSettings(){
+  const s=ldSet();const e=getEmp(aEmp);
+  document.getElementById('ot-sign').value=s.otMins<0?'-1':'1';
+  document.getElementById('ot-h').value=Math.floor(Math.abs(s.otMins)/60)||'';
+  document.getElementById('ot-m').value=Math.abs(s.otMins)%60||'';
+  document.getElementById('vac-carry').value=s.vacCarry||'';
+  const ps=document.getElementById('profSet');
+  if(e){ps.innerHTML='<div class="eli"><div class="eav" style="background:'+e.color+';width:38px;height:38px;font-size:0.88rem">'+ini(e.name)+'</div><div class="eli-info"><div class="eli-name">'+e.name+'</div><div class="eli-sub">'+(e.position?e.position+' · ':'')+hm(e.soll)+'h/Tag · '+e.vac+'d · '+BLN[e.bl]+'</div></div></div><button class="btn bp" onclick="openEditEmp(\''+e.id+'\')">✏️ PROFIL BEARBEITEN</button>';}
+  else ps.innerHTML='<div class="empty">Kein Profil</div>';
+  ldPinSet();
+  const rem=localStorage.getItem('ztpro_rem');
+  if(rem){const r=JSON.parse(rem);document.getElementById('rem-t').value=r.t||'17:00';document.getElementById('rem-txt').value=r.txt||'Zeiten eintragen! ⏱';document.getElementById('remStatus').textContent=r.active?'✅ Aktiv: täglich um '+r.t:'🔕 Deaktiviert';document.getElementById('remStatus').style.color=r.active?'var(--grn)':'var(--m2)';}
+}
+function saveSet(){
+  const sign=parseInt(document.getElementById('ot-sign').value);
+  const h=parseInt(document.getElementById('ot-h').value)||0,m=parseInt(document.getElementById('ot-m').value)||0;
+  const cur=ldSet();svSet({...cur,otMins:sign*(h*60+m),vacCarry:parseInt(document.getElementById('vac-carry').value)||0});
+  toast('✓ Gespeichert');updBanners();
+}
+
+// ===== FEIERTAGE =====
+function easterSun(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;return new Date(y,mo-1,day);}
+function eA(e,n){const d=new Date(e);d.setDate(d.getDate()+n);return fmt(d);}
+function fd(y,m,d){return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
+function getHols(yr,bl){
+  const y=parseInt(yr);const e=easterSun(y);
+  const h={[fd(y,1,1)]:'Neujahr',[eA(e,-2)]:'Karfreitag',[eA(e,0)]:'Ostersonntag',[eA(e,1)]:'Ostermontag',[fd(y,5,1)]:'Tag der Arbeit',[eA(e,39)]:'Christi Himmelfahrt',[eA(e,49)]:'Pfingstsonntag',[eA(e,50)]:'Pfingstmontag',[fd(y,10,3)]:'Tag der Deutschen Einheit',[fd(y,12,25)]:'1. Weihnachtstag',[fd(y,12,26)]:'2. Weihnachtstag'};
+  const ex={BY:{[fd(y,1,6)]:'Heilige Drei Könige',[eA(e,60)]:'Fronleichnam',[fd(y,8,15)]:'Mariä Himmelfahrt',[fd(y,11,1)]:'Allerheiligen'},BW:{[fd(y,1,6)]:'Heilige Drei Könige',[eA(e,60)]:'Fronleichnam',[fd(y,11,1)]:'Allerheiligen'},BE:{[fd(y,3,8)]:'Frauentag'},BB:{[fd(y,10,31)]:'Reformationstag'},HB:{[fd(y,10,31)]:'Reformationstag'},HH:{[fd(y,10,31)]:'Reformationstag'},HE:{[eA(e,60)]:'Fronleichnam'},MV:{[fd(y,10,31)]:'Reformationstag'},NI:{[fd(y,10,31)]:'Reformationstag'},NW:{[eA(e,60)]:'Fronleichnam',[fd(y,11,1)]:'Allerheiligen'},RP:{[eA(e,60)]:'Fronleichnam',[fd(y,11,1)]:'Allerheiligen'},SL:{[eA(e,60)]:'Fronleichnam',[fd(y,8,15)]:'Mariä Himmelfahrt',[fd(y,11,1)]:'Allerheiligen'},SN:{[fd(y,10,31)]:'Reformationstag',[fd(y,11,18)]:'Buß- und Bettag'},ST:{[fd(y,1,6)]:'Heilige Drei Könige',[fd(y,10,31)]:'Reformationstag'},SH:{[fd(y,10,31)]:'Reformationstag'},TH:{[fd(y,9,20)]:'Weltkindertag',[fd(y,10,31)]:'Reformationstag'}};
+  return{...h,...(ex[bl]||{})};
+}
+function importHols(){
+  const bl=getBL();const yr=today().slice(0,4);const hols=getHols(yr,bl);const d=ldData();
+  let added=0,skip=0;for(const[ds,name]of Object.entries(hols)){if(d[ds]){skip++;continue;}d[ds]={type:'holiday',name};added++;}
+  svData(d);document.getElementById('holStatus').textContent='✅ '+added+' Feiertage ('+BLN[bl]+', '+yr+'), '+skip+' bereits vorhanden';document.getElementById('holStatus').style.color='var(--grn)';toast('✓ '+added+' Feiertage eingetragen');updBanners();
+}
+
+// ===== REMINDERS =====
+function enableRem(){
+  const t=document.getElementById('rem-t').value,txt=document.getElementById('rem-txt').value;
+  if(!('Notification' in window)){document.getElementById('remStatus').textContent='❌ Nicht unterstützt';return;}
+  Notification.requestPermission().then(p=>{
+    if(p==='granted'){localStorage.setItem('ztpro_rem',JSON.stringify({t,txt,active:true}));schedRem(t,txt);document.getElementById('remStatus').textContent='✅ Aktiv: täglich um '+t;document.getElementById('remStatus').style.color='var(--grn)';toast('✓ Erinnerung aktiviert!');}
+    else{document.getElementById('remStatus').textContent='❌ Erlaubnis verweigert';document.getElementById('remStatus').style.color='var(--red)';}
+  });
+}
+function disableRem(){localStorage.removeItem('ztpro_rem');document.getElementById('remStatus').textContent='🔕 Deaktiviert';document.getElementById('remStatus').style.color='var(--m2)';toast('✓ Deaktiviert');}
+function schedRem(t,txt){const[h,m]=t.split(':').map(Number);const now=new Date();const next=new Date();next.setHours(h,m,0,0);if(next<=now)next.setDate(next.getDate()+1);setTimeout(()=>{if(Notification.permission==='granted')new Notification('⏱ Zeiterfassung',{body:txt});setInterval(()=>{if(Notification.permission==='granted')new Notification('⏱ Zeiterfassung',{body:txt});},86400000);},(next-now));}
+function initRem(){const r=localStorage.getItem('ztpro_rem');if(!r)return;const{t,txt,active}=JSON.parse(r);if(active&&Notification.permission==='granted')schedRem(t,txt);}
+
+// ===== TEAM =====
+function renderTeam(){
+  const emps=ldEmps();const list=document.getElementById('teamList');
+  if(!emps.length){list.innerHTML='<div class="empty">Noch keine Mitarbeiter</div>';document.getElementById('teamOV').innerHTML='';return;}
+  list.innerHTML=emps.map(e=>'<div class="eli"><div class="eav" style="background:'+e.color+';width:34px;height:34px;font-size:0.8rem">'+ini(e.name)+'</div><div class="eli-info"><div class="eli-name">'+e.name+'</div><div class="eli-sub">'+(e.position?e.position+' · ':'')+hm(e.soll)+'h · '+e.vac+'d · '+(BLN[e.bl]||e.bl)+'</div></div><div class="eli-actions"><button class="delbtn" onclick="switchEmp(\''+e.id+'\');nav(\'eingabe\')" style="border-color:var(--acc);color:var(--acc)">→</button><button class="delbtn" onclick="openEditEmp(\''+e.id+'\')">✏️</button><button class="delbtn" onclick="delEmp(\''+e.id+'\')">✕</button></div></div>').join('');
+  const yr=today().slice(0,4);
+  let ht='<table class="t"><thead><tr><th>Mitarbeiter</th><th>Tage</th><th>Std.</th><th>+/−</th><th>Urlaub</th></tr></thead><tbody>';
+  for(const e of emps){
+    const data=JSON.parse(localStorage.getItem(DPX+e.id)||'{}');let wd=0,wm=0,vac=0;
+    for(const[ds,en]of Object.entries(data)){if(ds.slice(0,4)!==yr||!isWD(ds))continue;if(en.type==='work'){wd++;wm+=en.totalMins;}else if(en.type==='overtime')wm-=e.soll;else if(en.type==='vacation')vac++;}
+    const diff=wm-wd*e.soll;ht+='<tr><td><div style="display:flex;align-items:center;gap:4px"><div class="eav" style="background:'+e.color+';width:16px;height:16px;font-size:0.45rem">'+ini(e.name)+'</div>'+e.name.split(' ')[0]+'</div></td><td>'+wd+'</td><td>'+hm(wm)+'</td><td class="'+cl(diff)+'">'+hm(diff,true)+'</td><td>'+vac+'</td></tr>';
+  }
+  document.getElementById('teamOV').innerHTML=ht+'</tbody></table>';
+}
+function delEmp(id){const e=getEmp(id);if(!e)return;if(!confirm('"'+e.name+'" und alle Daten löschen?'))return;const emps=ldEmps().filter(x=>x.id!==id);svEmps(emps);localStorage.removeItem(DPX+id);localStorage.removeItem(SPX+id);if(aEmp===id)aEmp=emps.length?emps[0].id:null;renderEmpBar();updHeader();renderTeam();toast('✓ Gelöscht');}
+
+// ===== EMP MODAL =====
+function renderColors(){const cont=document.getElementById('colorPicker');cont.innerHTML='';COLORS.forEach(c=>{const s=document.createElement('div');s.className='sw'+(c===selColor?' sel':'');s.style.background=c;s.onclick=()=>{selColor=c;renderColors();};cont.appendChild(s);});}
+function openAddEmp(){editEmp=null;document.getElementById('empModalTitle').textContent='MITARBEITER HINZUFÜGEN';document.getElementById('emp-name').value='';document.getElementById('emp-soll').value='480';document.getElementById('emp-vac').value='30';document.getElementById('emp-bl').value='NW';document.getElementById('emp-pos').value='';selColor=COLORS[0];renderColors();document.getElementById('empModal').classList.add('open');}
+function openEditEmp(id){const e=getEmp(id);if(!e)return;editEmp=id;document.getElementById('empModalTitle').textContent='PROFIL BEARBEITEN';document.getElementById('emp-name').value=e.name;document.getElementById('emp-soll').value=e.soll;document.getElementById('emp-vac').value=e.vac;document.getElementById('emp-bl').value=e.bl;document.getElementById('emp-pos').value=e.position||'';selColor=e.color||COLORS[0];renderColors();document.getElementById('empModal').classList.add('open');}
+function closeModal(){document.getElementById('empModal').classList.remove('open');}
+function saveEmp(){
+  const name=document.getElementById('emp-name').value.trim();if(!name){toast('Name eingeben!',true);return;}
+  const emps=ldEmps();
+  if(editEmp){const i=emps.findIndex(e=>e.id===editEmp);if(i>=0)emps[i]={...emps[i],name,color:selColor,soll:parseInt(document.getElementById('emp-soll').value),vac:parseInt(document.getElementById('emp-vac').value),bl:document.getElementById('emp-bl').value,position:document.getElementById('emp-pos').value.trim()};svEmps(emps);if(aEmp===editEmp)updHeader();}
+  else{const id='e'+Date.now();emps.push({id,name,color:selColor,soll:parseInt(document.getElementById('emp-soll').value),vac:parseInt(document.getElementById('emp-vac').value),bl:document.getElementById('emp-bl').value,position:document.getElementById('emp-pos').value.trim()});svEmps(emps);if(!aEmp)aEmp=id;}
+  closeModal();renderEmpBar();updHeader();toast('✓ Gespeichert');if(document.getElementById('pg-team').classList.contains('on'))renderTeam();
+}
+
+// ===== BACKUP =====
+function buildBackup(){
+  const emps=ldEmps();const allD={};const allS={};
+  emps.forEach(e=>{allD[e.id]=JSON.parse(localStorage.getItem(DPX+e.id)||'{}');allS[e.id]=JSON.parse(localStorage.getItem(SPX+e.id)||'{}');});
+  return{v:VER,date:today(),employees:emps,data:allD,settings:allS,uw:ldUW(),au:ldAU()};
+}
+
+function saveToGDrive(){
+  const bk=buildBackup();
+  const json=JSON.stringify(bk,null,2);
+  const filename='zeiterfassung_backup_'+today()+'.json';
+  // Create blob and use Web Share API (works on Android to share to Google Drive)
+  const blob=new Blob([json],{type:'application/json'});
+  const file=new File([blob],filename,{type:'application/json'});
+  if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+    navigator.share({files:[file],title:'Zeiterfassung Backup',text:'Backup vom '+today()})
+      .then(()=>toast('✓ Geteilt!'))
+      .catch(e=>{if(e.name!=='AbortError')fallbackDownload(json,filename);});
+  } else {
+    // Fallback: normal download
+    fallbackDownload(json,filename);
+    toast('📂 In Downloads gespeichert — manuell in Drive verschieben');
+  }
+}
+
+function fallbackDownload(json,filename){
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=filename;a.click();
+  URL.revokeObjectURL(url);
+}
+
+function copyBackupText(){
+  const bk=buildBackup();
+  const text=JSON.stringify(bk);
+  const showOK=()=>{
+    toast('✓ Kopiert! In Google Keep einfügen');
+    const st=document.getElementById('copyStatus');
+    if(st){st.style.display='block';setTimeout(()=>st.style.display='none',5000);}
+  };
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(showOK).catch(()=>fallbackCopy(text,showOK));
+  } else fallbackCopy(text,showOK);
+}
+
+function fallbackCopy(text,cb){
+  const ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');if(cb)cb();}catch{toast('Kopieren fehlgeschlagen',true);}
+  document.body.removeChild(ta);
+}
+
+function impFromText(){
+  const text=document.getElementById('pasteText').value.trim();
+  if(!text){toast('Bitte Text einfügen!',true);return;}
+  try{
+    const bk=JSON.parse(text);
+    applyBackup(bk);
+    document.getElementById('pasteText').value='';
+    const pa=document.getElementById('pasteArea');if(pa)pa.style.display='none';
+  }catch{toast('Ungültiger Backup-Text!',true);}
+}
+
+function applyBackup(bk){
+  const cnt=bk.employees?bk.employees.length:0;
+  if(!confirm(cnt+' Mitarbeiter importieren? Bestehende Daten werden überschrieben!'))return;
+  if(bk.employees)svEmps(bk.employees);
+  if(bk.data)for(const[id,d]of Object.entries(bk.data))localStorage.setItem(DPX+id,JSON.stringify(d));
+  if(bk.settings)for(const[id,s]of Object.entries(bk.settings))localStorage.setItem(SPX+id,JSON.stringify(s));
+  if(bk.uw)svUW(bk.uw);if(bk.au)svAU(bk.au);
+  const emps=ldEmps();if(emps.length&&!aEmp)aEmp=emps[0].id;
+  toast('✓ '+cnt+' Mitarbeiter importiert!');
+  const st=document.getElementById('impStatus');if(st){st.textContent='✓ Import erfolgreich ('+bk.date+')';st.style.color='var(--grn)';}
+  renderEmpBar();updHeader();updBanners();buildYrSels();renderHome();
+}
+function impData(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{applyBackup(JSON.parse(e.target.result));}
+    catch{toast('Import fehlgeschlagen!',true);}
+  };
+  reader.readAsText(file);ev.target.value='';
+}
+// ===== PWA INSTALL PROMPT =====
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  // Show install banner after 3 seconds
+  setTimeout(()=>{
+    if(deferredPrompt){
+      const banner=document.createElement('div');
+      banner.id='installBanner';
+      banner.style.cssText='position:fixed;bottom:0;left:0;right:0;background:var(--acc);color:#000;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;z-index:9998;font-family:\'JetBrains Mono\',monospace;font-size:0.72rem;font-weight:700;';
+      banner.innerHTML='<span>⏱ App installieren?</span><div style="display:flex;gap:8px"><button onclick="installApp()" style="background:#000;color:var(--acc);border:none;padding:7px 14px;border-radius:7px;font-family:\'JetBrains Mono\',monospace;font-size:0.7rem;font-weight:700;cursor:pointer">INSTALLIEREN</button><button onclick="document.getElementById(\'installBanner\').remove()" style="background:rgba(0,0,0,0.2);color:#000;border:none;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:0.8rem">✕</button></div>';
+      document.body.appendChild(banner);
+    }
+  },3000);
+});
+
+function installApp(){
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(()=>{
+    deferredPrompt=null;
+    const b=document.getElementById('installBanner');
+    if(b)b.remove();
+  });
+}
+
+window.addEventListener('appinstalled',()=>{
+  toast('✅ App installiert!');
+  deferredPrompt=null;
+});
+
+// ===== PWA SERVICE WORKER =====
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
