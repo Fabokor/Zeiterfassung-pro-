@@ -1277,8 +1277,20 @@ function calcAlles(){
   const eltern=Math.min(zah.reduce((s,z)=>s+z.bet,0),10908);
   abA+=eltern;
   const hwErs=Math.min(hwA*0.2,1200);
-  const gz=br*12>60000?0.42:br*12>30000?0.3:br*12>15000?0.24:0.14;
-  const ers=(wkUeb+Math.max(0,saA-36)+Math.max(0,abA-(br*12)*0.04))*gz+hwErs;
+  // Grenzsteuersatz (Jahresbrutto)
+  const brJ=br*12;
+  const gz=brJ>66760?0.42:brJ>17005?0.3:brJ>11784?0.24:0.14;
+  // Werbungskosten über Pauschbetrag (inkl. Steuerberater/Fortbildung)
+  const wkGesamt=wkGes+wb; // wb = Steuerberater etc.
+  const wkUebGes=Math.max(0,wkGesamt-1230);
+  // Sonderausgaben (Spenden, Versicherungen) — Pauschbetrag 36€ Ledig / 72€ Verheiratet
+  const saPausch=[3,4,5].includes(skl)?72:36;
+  const saErs=Math.max(0,saA-saPausch);
+  // Außergewöhnliche Belastungen — Zumutbarkeit 1-7% je nach Einkommen
+  const zumut=brJ<=15340?0.01:brJ<=51130?0.02:0.03;
+  const abErs=Math.max(0,abA-brJ*zumut);
+  // Gesamte Steuerersparnis
+  const ers=(wkUebGes+saErs+abErs)*gz+hwErs;
 
   // Anzeigen
   document.getElementById('steuerRes').style.display='block';
@@ -1298,7 +1310,7 @@ function calcAlles(){
   rub.style.color=wkUeb>0?'var(--grn)':'var(--mu)';
   document.getElementById('r-wd').textContent=wd+' Tage'+(wd===220?' (Schätzung)':'');
   document.getElementById('r-eltern').textContent=eur(eltern);
-  document.getElementById('r-ab').textContent=eur(abA);
+  document.getElementById('r-ab').textContent=eur(abA)+' (Zumutbarkeit: '+eur(brJ*zumut)+')';
   document.getElementById('r-hw').textContent=eur(hwErs);
   document.getElementById('r-ers').textContent=eur(ers);
 }
