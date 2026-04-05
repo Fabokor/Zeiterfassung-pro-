@@ -1310,9 +1310,12 @@ function calcAlles(){
   rub.style.color=wkUeb>0?'var(--grn)':'var(--mu)';
   document.getElementById('r-wd').textContent=wd+' Tage'+(wd===220?' (Schätzung)':'');
   document.getElementById('r-eltern').textContent=eur(eltern);
-  document.getElementById('r-ab').textContent=eur(abA)+' (Zumutbarkeit: '+eur(brJ*zumut)+')';
+  document.getElementById('r-ab').textContent=eur(abA);
   document.getElementById('r-hw').textContent=eur(hwErs);
   document.getElementById('r-ers').textContent=eur(ers);
+  // Show zumutbarkeit as sub-note
+  const abEl=document.getElementById('r-ab');
+  if(abEl)abEl.innerHTML=eur(abA)+'<div style="font-size:0.55rem;color:var(--m2);font-weight:400;margin-top:2px">Zumutbarkeit: '+eur(brJ*zumut)+' · Absetzbar: '+eur(abErs)+'</div>';
 }
 
 function initSteuer(){
